@@ -14,9 +14,15 @@ public class Cliente {
     private String nome;
     private String cpf;
     private String email;
-    private String rua;
-    private String bairro;
-    private String cidade;
+
+    @Column(name = "endereco_rua")
+    private String enderecoRua;
+
+    @Column(name = "endereco_bairro")
+    private String enderecoBairro;
+
+    @Column(name = "endereco_cidade")
+    private String enderecoCidade;
 
     public Cliente() {
     }
@@ -53,27 +59,27 @@ public class Cliente {
         this.email = email;
     }
 
-    public String getRua() {
-        return rua;
+    public String getEnderecoRua() {
+        return enderecoRua;
     }
 
-    public void setRua(String rua) {
-        this.rua = rua;
+    public void setEnderecoRua(String enderecoRua) {
+        this.enderecoRua = enderecoRua;
     }
 
-    public String getBairro() {
-        return bairro;
+    public String getEnderecoBairro() {
+        return enderecoBairro;
     }
 
-    public void setBairro(String bairro) {
-        this.bairro = bairro;
+    public void setEnderecoBairro(String enderecoBairro) {
+        this.enderecoBairro = enderecoBairro;
     }
 
-    public String getCidade() {
-        return cidade;
+    public String getEnderecoCidade() {
+        return enderecoCidade;
     }
 
-    public void setCidade(String cidade) {
-        this.cidade = cidade;
+    public void setEnderecoCidade(String enderecoCidade) {
+        this.enderecoCidade = enderecoCidade;
     }
 }

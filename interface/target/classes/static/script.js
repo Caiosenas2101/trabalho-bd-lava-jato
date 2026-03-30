@@ -31,9 +31,9 @@ async function carregarClientes() {
       nome: document.getElementById('nome').value,
       cpf: document.getElementById('cpf').value,
       email: document.getElementById('email').value,
-      rua: document.getElementById('rua').value,
-      bairro: document.getElementById('bairro').value,
-      cidade: document.getElementById('cidade').value
+      enderecoRua: document.getElementById('enderecoRua').value,
+      enderecoBairro: document.getElementById('enderecoBairro').value,
+      enderecoCidade: document.getElementById('enderecoCidade').value
     };
   
     await fetch('/clientes', {
