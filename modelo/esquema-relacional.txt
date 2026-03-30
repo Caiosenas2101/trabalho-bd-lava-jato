@@ -1,0 +1,41 @@
+Esquema Relacional
+
+CLIENTE (i̲d̲_̲c̲l̲i̲e̲n̲t̲e̲, nome, cpf, email, endereco_rua, endereco_bairro, endereco_cidade)
+
+CLIENTE_TELEFONE (i̲d̲_̲c̲l̲i̲e̲n̲t̲e̲, t̲e̲l̲e̲f̲o̲n̲e̲)
+id_cliente reference CLIENTE
+
+VEICULO (p̲l̲a̲c̲a̲, i̲d̲_̲c̲l̲i̲e̲n̲t̲e̲, modelo, cor, ano)
+id_cliente reference CLIENTE
+
+CARRO (p̲l̲a̲c̲a̲, i̲d̲_̲c̲l̲i̲e̲n̲t̲e̲, tipo_combustivel)
+placa, id_cliente reference VEICULO
+
+MOTO (p̲l̲a̲c̲a̲, i̲d̲_̲c̲l̲i̲e̲n̲t̲e̲, cilindrada)
+placa, id_cliente reference VEICULO
+
+FUNCIONARIO (i̲d̲_̲f̲u̲n̲c̲i̲o̲n̲a̲r̲i̲o̲, id_supervisor, nome, cargo)
+id_supervisor reference FUNCIONARIO
+
+FUNCIONARIO_TELEFONE (i̲d̲_̲f̲u̲n̲c̲i̲o̲n̲a̲r̲i̲o̲, t̲e̲l̲e̲f̲o̲n̲e̲)
+id_funcionario reference FUNCIONARIO
+
+LAVADOR (i̲d̲_̲f̲u̲n̲c̲i̲o̲n̲a̲r̲i̲o̲, habilidade)
+id_funcionario reference FUNCIONARIO
+
+GERENTE (i̲d̲_̲f̲u̲n̲c̲i̲o̲n̲a̲r̲i̲o̲, bonus)
+id_funcionario reference FUNCIONARIO
+
+SERVICO (i̲d̲_̲s̲e̲r̲v̲i̲c̲o̲, nome_servico, preco, tempo_min, descricao)
+
+ATENDIMENTO (i̲d̲_̲a̲t̲e̲n̲d̲i̲m̲e̲n̲t̲o̲, placa_veiculo, id_cliente_veiculo, id_servico, id_funcionario, data, hora, status)
+placa_veiculo, id_cliente_veiculo reference VEICULO
+id_servico reference SERVICO
+id_funcionario reference FUNCIONARIO
+
+AVALIACAO (i̲d̲_̲a̲v̲a̲l̲i̲a̲c̲a̲o̲, id_cliente, id_atendimento, nota, comentarios, data)
+id_cliente reference CLIENTE
+id_atendimento reference ATENDIMENTO
+
+PAGAMENTO (i̲d̲_̲p̲a̲g̲a̲m̲e̲n̲t̲o̲, id_atendimento, forma_pagto, valor_total, descontos, comprovante)
+id_atendimento reference ATENDIMENTO
