@@ -1,6 +1,6 @@
 USE lava_jato;
 
-INSERT INTO cliente (nome, cpf, email, rua, bairro, cidade) VALUES
+INSERT INTO cliente (nome, cpf, email, endereco_rua, endereco_bairro, endereco_cidade) VALUES
 ('João Silva', '12345678901', 'joao@email.com', 'Rua das Flores', 'Boa Viagem', 'Recife'),
 ('Maria Souza', '23456789012', 'maria@email.com', 'Av. Recife', 'Pina', 'Recife'),
 ('Carlos Lima', '34567890123', 'carlos@email.com', 'Rua do Sol', 'Casa Forte', 'Recife');
@@ -28,19 +28,19 @@ INSERT INTO lavador (id_funcionario, habilidade) VALUES
 (2, 'Lavagem completa e polimento'),
 (3, 'Lavagem simples e higienizacao interna');
 
-INSERT INTO veiculo (placa, modelo, cor, ano, id_cliente) VALUES
-('QWE1A23', 'Onix', 'Prata', 2020, 1),
-('RTY2B34', 'HB20', 'Branco', 2021, 2),
-('UIO3C45', 'CG 160', 'Preta', 2022, 3),
-('PAS4D56', 'Corolla', 'Cinza', 2019, 1);
+INSERT INTO veiculo (placa, id_cliente, modelo, cor, ano) VALUES
+('QWE1A23', 1, 'Onix', 'Prata', 2020),
+('RTY2B34', 2, 'HB20', 'Branco', 2021),
+('UIO3C45', 3, 'CG 160', 'Preta', 2022),
+('PAS4D56', 1, 'Corolla', 'Cinza', 2019);
 
-INSERT INTO carro (placa, combust) VALUES
-('QWE1A23', 'Flex'),
-('RTY2B34', 'Flex'),
-('PAS4D56', 'Gasolina');
+INSERT INTO carro (placa, id_cliente, tipo_combustivel) VALUES
+('QWE1A23', 1, 'Flex'),
+('RTY2B34', 2, 'Flex'),
+('PAS4D56', 1, 'Gasolina');
 
-INSERT INTO moto (placa, cilindrada) VALUES
-('UIO3C45', 160);
+INSERT INTO moto (placa, id_cliente, cilindrada) VALUES
+('UIO3C45', 3, '160cc');
 
 INSERT INTO servico (nome_servico, preco, tempo_min, descricao) VALUES
 ('Lavagem Simples', 30.00, 40, 'Lavagem externa do veiculo'),
@@ -48,22 +48,16 @@ INSERT INTO servico (nome_servico, preco, tempo_min, descricao) VALUES
 ('Polimento', 80.00, 120, 'Polimento da pintura'),
 ('Higienizacao Interna', 60.00, 90, 'Limpeza detalhada do interior');
 
-INSERT INTO atendimento (data, hora, status, placa_veiculo, id_cliente, id_funcionario) VALUES
-('2026-03-28', '08:00:00', 'finalizado', 'QWE1A23', 1, 2),
-('2026-03-29', '10:30:00', 'em_execucao', 'RTY2B34', 2, 3),
-('2026-03-30', '14:00:00', 'agendado', 'UIO3C45', 3, 2);
+INSERT INTO atendimento (placa_veiculo, id_cliente_veiculo, id_servico, id_funcionario, data, hora, status) VALUES
+('QWE1A23', 1, 1, 2, '2026-03-28', '08:00:00', 'finalizado'),
+('QWE1A23', 1, 2, 2, '2026-03-28', '09:00:00', 'finalizado'),
+('RTY2B34', 2, 2, 3, '2026-03-29', '10:30:00', 'em_execucao'),
+('UIO3C45', 3, 1, 2, '2026-03-30', '14:00:00', 'agendado'),
+('UIO3C45', 3, 4, 2, '2026-03-30', '15:00:00', 'agendado');
 
-INSERT INTO atendimento_servico (id_atendimento, id_servico) VALUES
-(1, 1),
-(1, 2),
-(2, 2),
-(3, 1),
-(3, 4);
+INSERT INTO pagamento (id_atendimento, forma_pagto, valor_total, descontos, comprovante) VALUES
+(1, 'Pix', 30.00, 0.00, 'Pagamento realizado via Pix'),
+(2, 'Cartao', 50.00, 0.00, 'Pagamento realizado no cartao');
 
-INSERT INTO pagamento (forma_pagamento, valor_total, desconto, comprovante, id_atendimento) VALUES
-('Pix', 80.00, 0.00, 'Pagamento realizado via Pix', 1),
-('Cartao', 50.00, 0.00, 'Pagamento em processamento', 2);
-
-INSERT INTO avaliacao (id_cliente, id_atendimento, data, nota, comentarios) VALUES
-(1, 1, '2026-03-28', 5, 'Excelente atendimento'),
-(2, 2, '2026-03-29', 4, 'Servico muito bom');
+INSERT INTO avaliacao (id_cliente, id_atendimento, nota, comentarios, data) VALUES
+(1, 1, 5, 'Excelente atendimento', '2026-03-28');
