@@ -36,11 +36,18 @@ async function carregarClientes() {
       enderecoCidade: document.getElementById('enderecoCidade').value
     };
   
-    await fetch('/clientes', {
+    const resposta = await fetch('/clientes', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(cliente)
     });
+  
+    if (!resposta.ok) {
+      const erro = await resposta.text();
+      console.error('Erro ao cadastrar cliente:', erro);
+      alert('Erro ao cadastrar cliente');
+      return;
+    }
   
     e.target.reset();
     carregarClientes();
