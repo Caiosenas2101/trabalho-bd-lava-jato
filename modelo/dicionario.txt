@@ -1,120 +1,81 @@
 DICIONÁRIO DE DADOS — SISTEMA LAVA JATO
 
-1. CLIENTE
-Descrição: Armazena os dados cadastrais dos clientes do lava jato.
+1. CLIENTE Descrição: Armazena os dados cadastrais dos clientes do lava jato.
+• id_cliente Tipo: INT | Restrição: PK, NOT NULL, AUTO_INCREMENT Descrição: Identificador único do cliente.
+• nome_primeiro Tipo: VARCHAR(60) | Restrição: NOT NULL Descrição: Primeiro nome do cliente (originado do atributo composto "nome").
+• nome_sobrenome Tipo: VARCHAR(60) | Restrição: NOT NULL Descrição: Sobrenome do cliente (originado do atributo composto "nome").
+• cpf Tipo: CHAR(11) | Restrição: UNIQUE, NOT NULL Descrição: CPF do cliente, armazenado sem pontuação.
+• email Tipo: VARCHAR(100) | Restrição: UNIQUE Descrição: Endereço de e-mail de contato do cliente.
+• endereco_rua Tipo: VARCHAR(100) | Restrição: — Descrição: Nome da rua (originado do atributo composto "endereco").
+• endereco_bairro Tipo: VARCHAR(80) | Restrição: — Descrição: Bairro (originado do atributo composto "endereco").
+• endereco_cidade Tipo: VARCHAR(80) | Restrição: — Descrição: Cidade (originado do atributo composto "endereco").
 
-id_cliente Tipo: INT | Restrição: PK, NOT NULL, AUTO_INCREMENT — Identificador único do cliente.
-nome Tipo: VARCHAR(100) | Restrição: NOT NULL — Nome completo do cliente.
-cpf Tipo: CHAR(11) | Restrição: UNIQUE, NOT NULL — CPF do cliente, armazenado sem pontuação.
-email Tipo: VARCHAR(100) | Restrição: UNIQUE — Endereço de e-mail de contato do cliente.
-endereco_rua Tipo: VARCHAR(100) | Restrição: — — Nome da rua (originado do atributo composto "endereco").
-endereco_bairro Tipo: VARCHAR(80) | Restrição: — — Bairro (originado do atributo composto "endereco").
-endereco_cidade Tipo: VARCHAR(80) | Restrição: — — Cidade (originado do atributo composto "endereco").
+2. CLIENTE_TELEFONE Descrição: Armazena os telefones do cliente. Tabela criada a partir do atributo multivalorado telefone (1,n) de CLIENTE.
+• id_cliente Tipo: INT | Restrição: PK, FK → CLIENTE.id_cliente Descrição: Referência ao cliente dono do telefone. Compõe a chave primária.
+• telefone Tipo: VARCHAR(20) | Restrição: PK, NOT NULL Descrição: Número de telefone. Compõe a chave primária junto com id_cliente.
 
+3. VEICULO Descrição: Armazena os veículos cadastrados. É uma entidade fraca — depende obrigatoriamente de um Cliente para existir.
+• placa Tipo: CHAR(7) | Restrição: PK, NOT NULL Descrição: Placa do veículo. Corresponde à chave parcial do modelo conceitual.
+• modelo Tipo: VARCHAR(80) | Restrição: NOT NULL Descrição: Modelo do veículo (ex: Civic, Gol, CG 160).
+• cor Tipo: VARCHAR(40) | Restrição: — Descrição: Cor predominante do veículo.
+• ano Tipo: SMALLINT | Restrição: — Descrição: Ano de fabricação do veículo.
+• id_cliente Tipo: INT | Restrição: FK → CLIENTE.id_cliente, NOT NULL Descrição: Referência ao cliente proprietário do veículo. Obrigatório por ser entidade fraca.
 
-2. CLIENTE_TELEFONE
-Descrição: Armazena os telefones do cliente. Tabela criada a partir do atributo multivalorado telefone (1,n) de CLIENTE.
+4. CARRO Descrição: Especialização de VEICULO. Armazena atributos exclusivos de veículos do tipo carro.
+• placa Tipo: CHAR(7) | Restrição: PK, FK → VEICULO.placa Descrição: Chave primária e estrangeira, referenciando o veículo pai.
+• tipo_combustivel Tipo: VARCHAR(30) | Restrição: — Descrição: Tipo de combustível utilizado (ex: gasolina, etanol, flex, elétrico).
 
-id_cliente Tipo: INT | Restrição: PK, FK → CLIENTE.id_cliente — Referência ao cliente dono do telefone. Compõe a chave primária.
-telefone Tipo: VARCHAR(20) | Restrição: PK, NOT NULL — Número de telefone. Compõe a chave primária junto com id_cliente.
+5. MOTO Descrição: Especialização de VEICULO. Armazena atributos exclusivos de veículos do tipo moto.
+• placa Tipo: CHAR(7) | Restrição: PK, FK → VEICULO.placa Descrição: Chave primária e estrangeira, referenciando o veículo pai.
+• cilindrada Tipo: VARCHAR(20) | Restrição: — Descrição: Cilindrada do motor da moto (ex: 150cc, 300cc).
 
+6. FUNCIONARIO Descrição: Armazena os funcionários do lava jato. Possui auto-relacionamento para representar a hierarquia de supervisão.
+• id_funcionario Tipo: INT | Restrição: PK, NOT NULL, AUTO_INCREMENT Descrição: Identificador único do funcionário.
+• id_supervisor Tipo: INT | Restrição: FK → FUNCIONARIO.id_funcionario, NULL Descrição: Referência ao funcionário que supervisiona este registro. Campo opcional (auto-relacionamento).
+• nome Tipo: VARCHAR(100) | Restrição: NOT NULL Descrição: Nome completo do funcionário.
+• cargo Tipo: VARCHAR(60) | Restrição: — Descrição: Cargo exercido pelo funcionário (ex: lavador, gerente).
 
-3. VEICULO
-Descrição: Armazena os veículos cadastrados. É uma entidade fraca — depende obrigatoriamente de um Cliente para existir. A chave primária é composta: (placa + id_cliente).
+7. FUNCIONARIO_TELEFONE Descrição: Armazena os telefones do funcionário. Tabela criada a partir do atributo multivalorado telefone (1,n) de FUNCIONARIO.
+• id_funcionario Tipo: INT | Restrição: PK, FK → FUNCIONARIO.id_funcionario Descrição: Referência ao funcionário dono do telefone. Compõe a chave primária.
+• telefone Tipo: VARCHAR(20) | Restrição: PK, NOT NULL Descrição: Número de telefone. Compõe a chave primária junto com id_funcionario.
 
-placa Tipo: CHAR(7) | Restrição: PK (composta), NOT NULL — Chave parcial do modelo conceitual. Compõe a chave primária junto com id_cliente.
-id_cliente Tipo: INT | Restrição: PK (composta), FK → CLIENTE.id_cliente, NOT NULL — Referência ao cliente proprietário do veículo. Compõe a chave primária por tratar-se de entidade fraca.
-modelo Tipo: VARCHAR(80) | Restrição: NOT NULL — Modelo do veículo (ex: Civic, Gol, CG 160).
-cor Tipo: VARCHAR(40) | Restrição: — — Cor predominante do veículo.
-ano Tipo: SMALLINT | Restrição: — — Ano de fabricação do veículo.
+8. LAVADOR Descrição: Especialização de FUNCIONARIO. Armazena atributos exclusivos de funcionários que atuam como lavadores.
+• id_funcionario Tipo: INT | Restrição: PK, FK → FUNCIONARIO.id_funcionario Descrição: Chave primária e estrangeira, referenciando o funcionário pai.
+• habilidade Tipo: VARCHAR(60) | Restrição: — Descrição: Nível ou tipo de habilidade do lavador (ex: polimento, higienização interna).
 
+9. GERENTE Descrição: Especialização de FUNCIONARIO. Armazena atributos exclusivos de funcionários que atuam como gerentes.
+• id_funcionario Tipo: INT | Restrição: PK, FK → FUNCIONARIO.id_funcionario Descrição: Chave primária e estrangeira, referenciando o funcionário pai.
+• bonus Tipo: DECIMAL(10,2) | Restrição: — Descrição: Valor do bônus mensal do gerente.
 
-4. CARRO
-Descrição: Especialização de VEICULO. Armazena atributos exclusivos de veículos do tipo carro. A FK referencia a PK composta de VEICULO.
+10. SERVICO Descrição: Catálogo de serviços oferecidos pelo lava jato.
+• id_servico Tipo: INT | Restrição: PK, NOT NULL, AUTO_INCREMENT Descrição: Identificador único do serviço.
+• nome_servico Tipo: VARCHAR(100) | Restrição: NOT NULL Descrição: Nome do serviço (ex: lavagem simples, lavagem completa, polimento).
+• preco Tipo: DECIMAL(10,2) | Restrição: NOT NULL Descrição: Preço cobrado pela execução do serviço.
+• tempo_min Tipo: INT | Restrição: — Descrição: Tempo estimado de execução do serviço em minutos.
+• descricao Tipo: TEXT | Restrição: — Descrição: Descrição detalhada do que o serviço inclui.
 
-placa Tipo: CHAR(7) | Restrição: PK, FK → VEICULO.placa — Compõe a FK composta para VEICULO.
-id_cliente Tipo: INT | Restrição: PK, FK → VEICULO.id_cliente — Compõe a FK composta para VEICULO.
-tipo_combustivel Tipo: VARCHAR(30) | Restrição: — — Tipo de combustível utilizado (ex: gasolina, etanol, flex, elétrico).
+11. ATENDIMENTO Descrição: Originada da entidade associativa do modelo conceitual. Registra cada atendimento realizado, vinculando veículo, serviço e funcionário responsável.
+• id_atendimento Tipo: INT | Restrição: PK, NOT NULL, AUTO_INCREMENT Descrição: Identificador único do atendimento.
+• placa_veiculo Tipo: CHAR(7) | Restrição: FK → VEICULO.placa, NOT NULL Descrição: Veículo que recebeu o atendimento.
+• id_servico Tipo: INT | Restrição: FK → SERVICO.id_servico, NOT NULL Descrição: Serviço executado durante o atendimento.
+• id_funcionario Tipo: INT | Restrição: FK → FUNCIONARIO.id_funcionario, NOT NULL Descrição: Funcionário responsável por realizar o atendimento.
+• data Tipo: DATE | Restrição: NOT NULL Descrição: Data em que o atendimento foi realizado.
+• hora Tipo: TIME | Restrição: NOT NULL Descrição: Horário de início do atendimento.
+• status Tipo: VARCHAR(20) | Restrição: NOT NULL Descrição: Situação atual do atendimento (ex: agendado, em andamento, concluído).
 
+12. AVALIACAO Descrição: Originada da relação "avalia" do modelo conceitual. Registra a avaliação feita por um cliente sobre um atendimento específico.
+• id_avaliacao Tipo: INT | Restrição: PK, NOT NULL, AUTO_INCREMENT Descrição: Identificador único da avaliação.
+• id_cliente Tipo: INT | Restrição: FK → CLIENTE.id_cliente, NOT NULL Descrição: Cliente que realizou a avaliação.
+• id_atendimento Tipo: INT | Restrição: FK → ATENDIMENTO.id_atendimento, UNIQUE Descrição: Atendimento avaliado. A restrição UNIQUE garante no máximo uma avaliação por atendimento.
+• nota Tipo: TINYINT | Restrição: NOT NULL Descrição: Nota atribuída ao atendimento, de 1 a 5.
+• comentarios Tipo: TEXT | Restrição: — Descrição: Comentário livre do cliente sobre o atendimento.
+• data Tipo: DATE | Restrição: — Descrição: Data em que a avaliação foi registrada.
 
-5. MOTO
-Descrição: Especialização de VEICULO. Armazena atributos exclusivos de veículos do tipo moto. A FK referencia a PK composta de VEICULO.
-
-placa Tipo: CHAR(7) | Restrição: PK, FK → VEICULO.placa — Compõe a FK composta para VEICULO.
-id_cliente Tipo: INT | Restrição: PK, FK → VEICULO.id_cliente — Compõe a FK composta para VEICULO.
-cilindrada Tipo: VARCHAR(20) | Restrição: — — Cilindrada do motor da moto (ex: 150cc, 300cc).
-
-
-6. FUNCIONARIO
-Descrição: Armazena os funcionários do lava jato. Possui auto-relacionamento para representar a hierarquia de supervisão.
-
-id_funcionario Tipo: INT | Restrição: PK, NOT NULL, AUTO_INCREMENT — Identificador único do funcionário.
-id_supervisor Tipo: INT | Restrição: FK → FUNCIONARIO.id_funcionario, NULL — Referência ao funcionário que supervisiona este registro. Campo opcional (auto-relacionamento).
-nome Tipo: VARCHAR(100) | Restrição: NOT NULL — Nome completo do funcionário.
-cargo Tipo: VARCHAR(60) | Restrição: — — Cargo exercido pelo funcionário (ex: lavador, gerente).
-
-
-7. FUNCIONARIO_TELEFONE
-Descrição: Armazena os telefones do funcionário. Tabela criada a partir do atributo multivalorado telefone (1,n) de FUNCIONARIO.
-
-id_funcionario Tipo: INT | Restrição: PK, FK → FUNCIONARIO.id_funcionario — Referência ao funcionário dono do telefone. Compõe a chave primária.
-telefone Tipo: VARCHAR(20) | Restrição: PK, NOT NULL — Número de telefone. Compõe a chave primária junto com id_funcionario.
-
-
-8. LAVADOR
-Descrição: Especialização de FUNCIONARIO. Armazena atributos exclusivos de funcionários que atuam como lavadores.
-
-id_funcionario Tipo: INT | Restrição: PK, FK → FUNCIONARIO.id_funcionario — Chave primária e estrangeira, referenciando o funcionário pai.
-habilidade Tipo: VARCHAR(60) | Restrição: — — Nível ou tipo de habilidade do lavador (ex: polimento, higienização interna).
-
-
-9. GERENTE
-Descrição: Especialização de FUNCIONARIO. Armazena atributos exclusivos de funcionários que atuam como gerentes.
-
-id_funcionario Tipo: INT | Restrição: PK, FK → FUNCIONARIO.id_funcionario — Chave primária e estrangeira, referenciando o funcionário pai.
-bonus Tipo: DECIMAL(10,2) | Restrição: — — Valor do bônus mensal do gerente.
-
-
-10. SERVICO
-Descrição: Catálogo de serviços oferecidos pelo lava jato.
-
-id_servico Tipo: INT | Restrição: PK, NOT NULL, AUTO_INCREMENT — Identificador único do serviço.
-nome_servico Tipo: VARCHAR(100) | Restrição: NOT NULL — Nome do serviço (ex: lavagem simples, lavagem completa, polimento).
-preco Tipo: DECIMAL(10,2) | Restrição: NOT NULL — Preço cobrado pela execução do serviço.
-tempo_min Tipo: INT | Restrição: — — Tempo estimado de execução do serviço em minutos.
-descricao Tipo: TEXT | Restrição: — — Descrição detalhada do que o serviço inclui.
-
-
-11. ATENDIMENTO
-Descrição: Originada da entidade associativa do modelo conceitual. Registra cada atendimento realizado, vinculando veículo, serviço e funcionário responsável.
-
-id_atendimento Tipo: INT | Restrição: PK, NOT NULL, AUTO_INCREMENT — Identificador único do atendimento.
-placa_veiculo Tipo: CHAR(7) | Restrição: FK → VEICULO.placa, NOT NULL — Placa do veículo que recebeu o atendimento. Parte da FK composta para VEICULO.
-id_cliente_veiculo Tipo: INT | Restrição: FK → VEICULO.id_cliente, NOT NULL — id_cliente do veículo. Parte da FK composta para VEICULO, necessário por ser entidade fraca.
-id_servico Tipo: INT | Restrição: FK → SERVICO.id_servico, NOT NULL — Serviço executado durante o atendimento.
-id_funcionario Tipo: INT | Restrição: FK → FUNCIONARIO.id_funcionario, NOT NULL — Funcionário responsável por realizar o atendimento.
-data Tipo: DATE | Restrição: NOT NULL — Data em que o atendimento foi realizado.
-hora Tipo: TIME | Restrição: NOT NULL — Horário de início do atendimento.
-status Tipo: VARCHAR(20) | Restrição: NOT NULL — Situação atual do atendimento (ex: agendado, em andamento, concluído).
-
-
-12. AVALIACAO
-Descrição: Originada da relação "avalia" do modelo conceitual. Registra a avaliação feita por um cliente sobre um atendimento específico.
-
-id_avaliacao Tipo: INT | Restrição: PK, NOT NULL, AUTO_INCREMENT — Identificador único da avaliação.
-id_cliente Tipo: INT | Restrição: FK → CLIENTE.id_cliente, NOT NULL — Cliente que realizou a avaliação.
-id_atendimento Tipo: INT | Restrição: FK → ATENDIMENTO.id_atendimento, UNIQUE, NOT NULL — Atendimento avaliado. A restrição UNIQUE garante no máximo uma avaliação por atendimento.
-nota Tipo: TINYINT | Restrição: NOT NULL — Nota atribuída ao atendimento, de 1 a 5.
-comentarios Tipo: TEXT | Restrição: — — Comentário livre do cliente sobre o atendimento.
-data Tipo: DATE | Restrição: — — Data em que a avaliação foi registrada.
-
-
-13. PAGAMENTO
-Descrição: Registra o pagamento gerado ao final de cada atendimento. Possui relação 1:1 com ATENDIMENTO.
-
-id_pagamento Tipo: INT | Restrição: PK, NOT NULL, AUTO_INCREMENT — Identificador único do pagamento.
-id_atendimento Tipo: INT | Restrição: FK → ATENDIMENTO.id_atendimento, UNIQUE, NOT NULL — Atendimento que originou o pagamento. A restrição UNIQUE garante a relação 1:1.
-forma_pagto Tipo: VARCHAR(30) | Restrição: NOT NULL — Forma de pagamento utilizada (ex: dinheiro, pix, cartão de crédito, débito).
-valor_total Tipo: DECIMAL(10,2) | Restrição: NOT NULL — Valor total cobrado pelo atendimento.
-descontos Tipo: DECIMAL(10,2) | Restrição: DEFAULT 0.00 — Valor de desconto aplicado sobre o total.
-comprovante Tipo: VARCHAR(200) | Restrição: — — Código ou caminho do comprovante de pagamento emitido.
+13. PAGAMENTO Descrição: Registra o pagamento gerado ao final de cada atendimento. Possui relação 1:1 com ATENDIMENTO.
+• id_pagamento Tipo: INT | Restrição: PK, NOT NULL, AUTO_INCREMENT Descrição: Identificador único do pagamento.
+• id_atendimento Tipo: INT | Restrição: FK → ATENDIMENTO.id_atendimento, UNIQUE Descrição: Atendimento que originou o pagamento. A restrição UNIQUE garante a relação 1:1.
+• forma_pagto Tipo: VARCHAR(30) | Restrição: NOT NULL Descrição: Forma de pagamento utilizada (ex: dinheiro, pix, cartão de crédito, débito).
+• valor_total Tipo: DECIMAL(10,2) | Restrição: NOT NULL Descrição: Valor total cobrado pelo atendimento.
+• descontos Tipo: DECIMAL(10,2) | Restrição: DEFAULT 0.00 Descrição: Valor de desconto aplicado sobre o total.
+• comprovante Tipo: VARCHAR(200) | Restrição: — Descrição: Código ou caminho do comprovante de pagamento emitido.
+ 
