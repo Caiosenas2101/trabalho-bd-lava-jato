@@ -41,16 +41,22 @@ public class ServicoRepository {
                 ROW_MAPPER);
     }
 
-    public Servico save(Servico servico) {
-        if (servico.getIdServico() == null) {
-            insert(servico);
-        } else {
-            update(servico);
+    public Servico findById(Integer idServico) {
+        List<Servico> servicos = jdbcTemplate.query(
+                """
+                        SELECT id_servico, nome_servico, preco, tempo_min, descricao
+                        FROM servico
+                        WHERE id_servico = ?
+                        """,
+                ROW_MAPPER,
+                idServico);
+        if (servicos.isEmpty()) {
+            return null;
         }
-        return servico;
+        return servicos.get(0);
     }
 
-    private void insert(Servico servico) {
+    public Servico insert(Servico servico) {
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection.prepareStatement(
@@ -73,10 +79,11 @@ public class ServicoRepository {
         if (key != null) {
             servico.setIdServico(key.intValue());
         }
+        return servico;
     }
 
-    private void update(Servico servico) {
-        jdbcTemplate.update(
+    public boolean update(Servico servico) {
+        int linhasAfetadas = jdbcTemplate.update(
                 """
                         UPDATE servico SET nome_servico = ?, preco = ?, tempo_min = ?, descricao = ?
                         WHERE id_servico = ?
@@ -86,5 +93,13 @@ public class ServicoRepository {
                 servico.getTempoMin(),
                 servico.getDescricao(),
                 servico.getIdServico());
+        return linhasAfetadas > 0;
+    }
+
+    public boolean deleteById(Integer idServico) {
+        int linhasAfetadas = jdbcTemplate.update(
+                "DELETE FROM servico WHERE id_servico = ?",
+                idServico);
+        return linhasAfetadas > 0;
     }
 }

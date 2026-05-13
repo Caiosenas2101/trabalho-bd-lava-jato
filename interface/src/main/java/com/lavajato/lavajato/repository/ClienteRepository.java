@@ -37,16 +37,22 @@ public class ClienteRepository {
                 ROW_MAPPER);
     }
 
-    public Cliente save(Cliente cliente) {
-        if (cliente.getIdCliente() == null) {
-            insert(cliente);
-        } else {
-            update(cliente);
+    public Cliente findById(Integer idCliente) {
+        List<Cliente> clientes = jdbcTemplate.query(
+                """
+                        SELECT id_cliente, nome, cpf, email, endereco_rua, endereco_bairro, endereco_cidade
+                        FROM cliente
+                        WHERE id_cliente = ?
+                        """,
+                ROW_MAPPER,
+                idCliente);
+        if (clientes.isEmpty()) {
+            return null;
         }
-        return cliente;
+        return clientes.get(0);
     }
 
-    private void insert(Cliente cliente) {
+    public Cliente insert(Cliente cliente) {
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection.prepareStatement(
@@ -67,10 +73,11 @@ public class ClienteRepository {
         if (key != null) {
             cliente.setIdCliente(key.intValue());
         }
+        return cliente;
     }
 
-    private void update(Cliente cliente) {
-        jdbcTemplate.update(
+    public boolean update(Cliente cliente) {
+        int linhasAfetadas = jdbcTemplate.update(
                 """
                         UPDATE cliente SET nome = ?, cpf = ?, email = ?, endereco_rua = ?, endereco_bairro = ?, endereco_cidade = ?
                         WHERE id_cliente = ?
@@ -82,5 +89,13 @@ public class ClienteRepository {
                 cliente.getEnderecoBairro(),
                 cliente.getEnderecoCidade(),
                 cliente.getIdCliente());
+        return linhasAfetadas > 0;
+    }
+
+    public boolean deleteById(Integer idCliente) {
+        int linhasAfetadas = jdbcTemplate.update(
+                "DELETE FROM cliente WHERE id_cliente = ?",
+                idCliente);
+        return linhasAfetadas > 0;
     }
 }

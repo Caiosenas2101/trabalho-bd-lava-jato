@@ -2,26 +2,68 @@ body {
     font-family: Arial, sans-serif;
     margin: 30px;
     background: #f4f4f4;
-  }
-  
-  h1 {
+}
+
+h1 {
     text-align: center;
-  }
-  
-  section {
+}
+
+section {
     background: white;
     padding: 20px;
     border-radius: 10px;
     margin-bottom: 20px;
-  }
-  
-  form {
+}
+
+form {
     display: grid;
     gap: 10px;
     margin-bottom: 15px;
-  }
-  
-  input, button {
+}
+
+input,
+button {
     padding: 10px;
     font-size: 16px;
-  }
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+.item-lista {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.acoes-formulario,
+.acoes-item {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+button {
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    background: #2563eb;
+    color: white;
+}
+
+button.secundario {
+    background: #6b7280;
+}
+
+button.perigo {
+    background: #dc2626;
+}
+
+.oculto {
+    display: none;
+}
