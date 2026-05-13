@@ -55,12 +55,11 @@ DICIONÁRIO DE DADOS — SISTEMA LAVA JATO
 • tempo_min Tipo: INT | Restrição: — Descrição: Tempo estimado de execução do serviço em minutos.
 • descricao Tipo: TEXT | Restrição: — Descrição: Descrição detalhada do que o serviço inclui.
 
-11. ATENDIMENTO Descrição: Originada da entidade associativa do modelo conceitual. Registra cada atendimento realizado, vinculando veículo, serviço e funcionário responsável.
+11. ATENDIMENTO Descrição: Originada da entidade associativa do modelo conceitual. Registra cada atendimento realizado, vinculando veículo e serviço. Os funcionários responsáveis são associados pela tabela REALIZA.
 • id_atendimento Tipo: INT | Restrição: PK, NOT NULL, AUTO_INCREMENT Descrição: Identificador único do atendimento.
 • placa_veiculo Tipo: CHAR(7) | Restrição: FK → VEICULO.placa, NOT NULL Descrição: Veículo que recebeu o atendimento.
 • id_cliente_veiculo Tipo: INT | Restrição: FK → VEICULO.id_cliente, NOT NULL Descrição: Identifica o cliente dono do veículo referenciado no atendimento.
 • id_servico Tipo: INT | Restrição: FK → SERVICO.id_servico, NOT NULL Descrição: Serviço executado durante o atendimento.
-• id_funcionario Tipo: INT | Restrição: FK → FUNCIONARIO.id_funcionario, NOT NULL Descrição: Funcionário responsável por realizar o atendimento.
 • data Tipo: DATE | Restrição: NOT NULL Descrição: Data em que o atendimento foi realizado.
 • hora Tipo: TIME | Restrição: NOT NULL Descrição: Horário de início do atendimento.
 • status Tipo: VARCHAR(20) | Restrição: NOT NULL Descrição: Situação atual do atendimento (ex: agendado, em andamento, concluído).
@@ -80,4 +79,8 @@ DICIONÁRIO DE DADOS — SISTEMA LAVA JATO
 • valor_total Tipo: DECIMAL(10,2) | Restrição: NOT NULL Descrição: Valor total cobrado pelo atendimento.
 • descontos Tipo: DECIMAL(10,2) | Restrição: DEFAULT 0.00 Descrição: Valor de desconto aplicado sobre o total.
 • comprovante Tipo: VARCHAR(200) | Restrição: — Descrição: Código ou caminho do comprovante de pagamento emitido.
+
+14. REALIZA Descrição: Tabela associativa que representa a relação N:N entre funcionários e atendimentos, permitindo que um atendimento seja realizado por um ou mais funcionários e que um funcionário participe de vários atendimentos.
+• id_funcionario Tipo: INT | Restrição: PK, FK → FUNCIONARIO.id_funcionario, NOT NULL Descrição: Funcionário que participa da realização do atendimento. Compõe a chave primária.
+• id_atendimento Tipo: INT | Restrição: PK, FK → ATENDIMENTO.id_atendimento, NOT NULL Descrição: Atendimento realizado pelo funcionário. Compõe a chave primária.
  

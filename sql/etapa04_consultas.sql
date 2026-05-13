@@ -50,9 +50,9 @@ SELECT
     f.nome,
     f.cargo
 FROM funcionario f
-LEFT JOIN atendimento a
-    ON a.id_funcionario = f.id_funcionario
-WHERE a.id_atendimento IS NULL
+LEFT JOIN realiza r
+    ON r.id_funcionario = f.id_funcionario
+WHERE r.id_atendimento IS NULL
 ORDER BY f.id_funcionario;
 
 -- Consulta 04

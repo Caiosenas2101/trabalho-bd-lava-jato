@@ -97,9 +97,8 @@ public class ServicoRepository {
     }
 
     public boolean deleteById(Integer idServico) {
-        int linhasAfetadas = jdbcTemplate.update(
-                "DELETE FROM servico WHERE id_servico = ?",
-                idServico);
+        jdbcTemplate.update("DELETE FROM atendimento WHERE id_servico = ?", idServico);
+        int linhasAfetadas = jdbcTemplate.update("DELETE FROM servico WHERE id_servico = ?", idServico);
         return linhasAfetadas > 0;
     }
 }

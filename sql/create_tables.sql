@@ -19,6 +19,7 @@ CREATE TABLE funcionario (
     id_supervisor INT,
     CONSTRAINT fk_funcionario_supervisor
         FOREIGN KEY (id_supervisor) REFERENCES funcionario(id_funcionario)
+            ON DELETE SET NULL
 );
 
 CREATE TABLE servico (
@@ -35,6 +36,7 @@ CREATE TABLE cliente_telefone (
     PRIMARY KEY (id_cliente, telefone),
     CONSTRAINT fk_cliente_telefone_cliente
         FOREIGN KEY (id_cliente) REFERENCES cliente(id_cliente)
+            ON UPDATE CASCADE
 );
 
 CREATE TABLE funcionario_telefone (
@@ -93,16 +95,25 @@ CREATE TABLE atendimento (
     placa_veiculo CHAR(7) NOT NULL,
     id_cliente_veiculo INT NOT NULL,
     id_servico INT NOT NULL,
-    id_funcionario INT NOT NULL,
     data DATE NOT NULL,
     hora TIME NOT NULL,
     status VARCHAR(20) NOT NULL,
     CONSTRAINT fk_atendimento_veiculo
         FOREIGN KEY (placa_veiculo, id_cliente_veiculo) REFERENCES veiculo(placa, id_cliente),
     CONSTRAINT fk_atendimento_id_servico_servico
-        FOREIGN KEY (id_servico) REFERENCES servico(id_servico),
-    CONSTRAINT fk_atendimento_id_funcionario_funcionario
+        FOREIGN KEY (id_servico) REFERENCES servico(id_servico)
+);
+
+CREATE TABLE realiza (
+    id_funcionario INT NOT NULL,
+    id_atendimento INT NOT NULL,
+    PRIMARY KEY (id_funcionario, id_atendimento),
+    CONSTRAINT fk_realiza_funcionario
         FOREIGN KEY (id_funcionario) REFERENCES funcionario(id_funcionario)
+            ON DELETE CASCADE,
+    CONSTRAINT fk_realiza_atendimento
+        FOREIGN KEY (id_atendimento) REFERENCES atendimento(id_atendimento)
+            ON DELETE CASCADE
 );
 
 CREATE TABLE pagamento (

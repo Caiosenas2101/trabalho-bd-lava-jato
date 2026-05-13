@@ -31,8 +31,10 @@ JOIN veiculo v
    AND v.id_cliente = a.id_cliente_veiculo
 JOIN servico s
     ON s.id_servico = a.id_servico
+JOIN realiza r
+    ON r.id_atendimento = a.id_atendimento
 JOIN funcionario f
-    ON f.id_funcionario = a.id_funcionario
+    ON f.id_funcionario = r.id_funcionario
 WHERE a.status = 'finalizado';
 
 -- View 02

@@ -60,6 +60,7 @@ As principais entidades do sistema são:
 - `GERENTE`
 - `SERVICO`
 - `ATENDIMENTO`
+- `REALIZA`
 - `AVALIACAO`
 - `PAGAMENTO`
 

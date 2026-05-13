@@ -5,169 +5,104 @@ import com.lavajato.lavajato.model.Servico;
 import com.lavajato.lavajato.repository.ClienteRepository;
 import com.lavajato.lavajato.repository.ServicoRepository;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.MediaType;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import java.math.BigDecimal;
+import java.util.List;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class CrudControllerTests {
 
     @Test
-    void deveBuscarClientePorId() throws Exception {
-        ClienteRepository repository = mock(ClienteRepository.class);
-        when(repository.findById(1)).thenReturn(criarCliente());
+    void deveBuscarClientePorId() {
+        ClienteController controller = new ClienteController(new ClienteRepositoryFake());
 
-        MockMvc mockMvc = criarMockMvc(new ClienteController(repository));
+        ResponseEntity<Cliente> resposta = controller.buscarPorId(1);
 
-        mockMvc.perform(get("/clientes/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.idCliente").value(1))
-                .andExpect(jsonPath("$.nome").value("Maria"));
+        assertEquals(HttpStatus.OK, resposta.getStatusCode());
+        assertNotNull(resposta.getBody());
+        assertEquals(1, resposta.getBody().getIdCliente());
+        assertEquals("Maria", resposta.getBody().getNome());
     }
 
     @Test
-    void deveCadastrarCliente() throws Exception {
-        ClienteRepository repository = mock(ClienteRepository.class);
-        when(repository.insert(org.mockito.ArgumentMatchers.any(Cliente.class))).thenReturn(criarCliente());
+    void deveCadastrarCliente() {
+        ClienteController controller = new ClienteController(new ClienteRepositoryFake());
 
-        MockMvc mockMvc = criarMockMvc(new ClienteController(repository));
+        ResponseEntity<Cliente> resposta = controller.cadastrar(criarCliente());
 
-        mockMvc.perform(post("/clientes")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {
-                                  "nome": "Maria",
-                                  "cpf": "12345678901",
-                                  "email": "maria@email.com",
-                                  "enderecoRua": "Rua A",
-                                  "enderecoBairro": "Centro",
-                                  "enderecoCidade": "Recife"
-                                }
-                                """))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.idCliente").value(1));
+        assertEquals(HttpStatus.CREATED, resposta.getStatusCode());
+        assertNotNull(resposta.getBody());
+        assertEquals(1, resposta.getBody().getIdCliente());
     }
 
     @Test
-    void deveAtualizarCliente() throws Exception {
-        ClienteRepository repository = mock(ClienteRepository.class);
-        when(repository.update(org.mockito.ArgumentMatchers.any(Cliente.class))).thenReturn(true);
-        when(repository.findById(1)).thenReturn(criarCliente());
+    void deveAtualizarCliente() {
+        ClienteController controller = new ClienteController(new ClienteRepositoryFake());
 
-        MockMvc mockMvc = criarMockMvc(new ClienteController(repository));
+        ResponseEntity<Cliente> resposta = controller.atualizar(1, criarCliente());
 
-        mockMvc.perform(put("/clientes/1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {
-                                  "nome": "Maria",
-                                  "cpf": "12345678901",
-                                  "email": "maria@email.com",
-                                  "enderecoRua": "Rua A",
-                                  "enderecoBairro": "Centro",
-                                  "enderecoCidade": "Recife"
-                                }
-                                """))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.idCliente").value(1));
+        assertEquals(HttpStatus.OK, resposta.getStatusCode());
+        assertNotNull(resposta.getBody());
+        assertEquals(1, resposta.getBody().getIdCliente());
     }
 
     @Test
-    void deveRemoverCliente() throws Exception {
-        ClienteRepository repository = mock(ClienteRepository.class);
-        when(repository.deleteById(1)).thenReturn(true);
+    void deveRemoverCliente() {
+        ClienteController controller = new ClienteController(new ClienteRepositoryFake());
 
-        MockMvc mockMvc = criarMockMvc(new ClienteController(repository));
+        ResponseEntity<Void> resposta = controller.remover(1);
 
-        mockMvc.perform(delete("/clientes/1"))
-                .andExpect(status().isNoContent());
+        assertEquals(HttpStatus.NO_CONTENT, resposta.getStatusCode());
     }
 
     @Test
-    void deveBuscarServicoPorId() throws Exception {
-        ServicoRepository repository = mock(ServicoRepository.class);
-        when(repository.findById(1)).thenReturn(criarServico());
+    void deveBuscarServicoPorId() {
+        ServicoController controller = new ServicoController(new ServicoRepositoryFake());
 
-        MockMvc mockMvc = criarMockMvc(new ServicoController(repository));
+        ResponseEntity<Servico> resposta = controller.buscarPorId(1);
 
-        mockMvc.perform(get("/servicos/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.idServico").value(1))
-                .andExpect(jsonPath("$.nomeServico").value("Lavagem Completa"));
+        assertEquals(HttpStatus.OK, resposta.getStatusCode());
+        assertNotNull(resposta.getBody());
+        assertEquals(1, resposta.getBody().getIdServico());
+        assertEquals("Lavagem Completa", resposta.getBody().getNomeServico());
     }
 
     @Test
-    void deveCadastrarServico() throws Exception {
-        ServicoRepository repository = mock(ServicoRepository.class);
-        when(repository.insert(org.mockito.ArgumentMatchers.any(Servico.class))).thenReturn(criarServico());
+    void deveCadastrarServico() {
+        ServicoController controller = new ServicoController(new ServicoRepositoryFake());
 
-        MockMvc mockMvc = criarMockMvc(new ServicoController(repository));
+        ResponseEntity<Servico> resposta = controller.cadastrar(criarServico());
 
-        mockMvc.perform(post("/servicos")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {
-                                  "nomeServico": "Lavagem Completa",
-                                  "preco": 55.00,
-                                  "tempoMin": 60,
-                                  "descricao": "Lavagem detalhada"
-                                }
-                                """))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.idServico").value(1));
+        assertEquals(HttpStatus.CREATED, resposta.getStatusCode());
+        assertNotNull(resposta.getBody());
+        assertEquals(1, resposta.getBody().getIdServico());
     }
 
     @Test
-    void deveAtualizarServico() throws Exception {
-        ServicoRepository repository = mock(ServicoRepository.class);
-        when(repository.update(org.mockito.ArgumentMatchers.any(Servico.class))).thenReturn(true);
-        when(repository.findById(1)).thenReturn(criarServico());
+    void deveAtualizarServico() {
+        ServicoController controller = new ServicoController(new ServicoRepositoryFake());
 
-        MockMvc mockMvc = criarMockMvc(new ServicoController(repository));
+        ResponseEntity<Servico> resposta = controller.atualizar(1, criarServico());
 
-        mockMvc.perform(put("/servicos/1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {
-                                  "nomeServico": "Lavagem Completa",
-                                  "preco": 55.00,
-                                  "tempoMin": 60,
-                                  "descricao": "Lavagem detalhada"
-                                }
-                                """))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.idServico").value(1));
+        assertEquals(HttpStatus.OK, resposta.getStatusCode());
+        assertNotNull(resposta.getBody());
+        assertEquals(1, resposta.getBody().getIdServico());
     }
 
     @Test
-    void deveRemoverServico() throws Exception {
-        ServicoRepository repository = mock(ServicoRepository.class);
-        when(repository.deleteById(1)).thenReturn(true);
+    void deveRemoverServico() {
+        ServicoController controller = new ServicoController(new ServicoRepositoryFake());
 
-        MockMvc mockMvc = criarMockMvc(new ServicoController(repository));
+        ResponseEntity<Void> resposta = controller.remover(1);
 
-        mockMvc.perform(delete("/servicos/1"))
-                .andExpect(status().isNoContent());
+        assertEquals(HttpStatus.NO_CONTENT, resposta.getStatusCode());
     }
 
-    private MockMvc criarMockMvc(Object controller) {
-        return MockMvcBuilders.standaloneSetup(controller)
-                .setMessageConverters(new MappingJackson2HttpMessageConverter())
-                .build();
-    }
-
-    private Cliente criarCliente() {
+    private static Cliente criarCliente() {
         Cliente cliente = new Cliente();
         cliente.setIdCliente(1);
         cliente.setNome("Maria");
@@ -179,7 +114,7 @@ class CrudControllerTests {
         return cliente;
     }
 
-    private Servico criarServico() {
+    private static Servico criarServico() {
         Servico servico = new Servico();
         servico.setIdServico(1);
         servico.setNomeServico("Lavagem Completa");
@@ -187,5 +122,69 @@ class CrudControllerTests {
         servico.setTempoMin(60);
         servico.setDescricao("Lavagem detalhada");
         return servico;
+    }
+
+    private static class ClienteRepositoryFake extends ClienteRepository {
+
+        ClienteRepositoryFake() {
+            super(null);
+        }
+
+        @Override
+        public List<Cliente> findAll() {
+            return List.of(criarCliente());
+        }
+
+        @Override
+        public Cliente findById(Integer idCliente) {
+            return criarCliente();
+        }
+
+        @Override
+        public Cliente insert(Cliente cliente) {
+            return criarCliente();
+        }
+
+        @Override
+        public boolean update(Cliente cliente) {
+            return true;
+        }
+
+        @Override
+        public boolean deleteById(Integer idCliente) {
+            return true;
+        }
+    }
+
+    private static class ServicoRepositoryFake extends ServicoRepository {
+
+        ServicoRepositoryFake() {
+            super(null);
+        }
+
+        @Override
+        public List<Servico> findAll() {
+            return List.of(criarServico());
+        }
+
+        @Override
+        public Servico findById(Integer idServico) {
+            return criarServico();
+        }
+
+        @Override
+        public Servico insert(Servico servico) {
+            return criarServico();
+        }
+
+        @Override
+        public boolean update(Servico servico) {
+            return true;
+        }
+
+        @Override
+        public boolean deleteById(Integer idServico) {
+            return true;
+        }
     }
 }

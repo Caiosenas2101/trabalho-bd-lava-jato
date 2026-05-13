@@ -93,9 +93,17 @@ public class ClienteRepository {
     }
 
     public boolean deleteById(Integer idCliente) {
-        int linhasAfetadas = jdbcTemplate.update(
-                "DELETE FROM cliente WHERE id_cliente = ?",
+        jdbcTemplate.update(
+                """
+                        DELETE FROM atendimento
+                        WHERE id_cliente_veiculo = ?
+                        """,
                 idCliente);
+        jdbcTemplate.update("DELETE FROM carro WHERE id_cliente = ?", idCliente);
+        jdbcTemplate.update("DELETE FROM moto WHERE id_cliente = ?", idCliente);
+        jdbcTemplate.update("DELETE FROM veiculo WHERE id_cliente = ?", idCliente);
+        jdbcTemplate.update("DELETE FROM cliente_telefone WHERE id_cliente = ?", idCliente);
+        int linhasAfetadas = jdbcTemplate.update("DELETE FROM cliente WHERE id_cliente = ?", idCliente);
         return linhasAfetadas > 0;
     }
 }

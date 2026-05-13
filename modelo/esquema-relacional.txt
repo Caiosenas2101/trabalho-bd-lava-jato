@@ -28,14 +28,17 @@ id_funcionario reference FUNCIONARIO
 
 SERVICO (i̲d̲_̲s̲e̲r̲v̲i̲c̲o̲, nome_servico, preco, tempo_min, descricao)
 
-ATENDIMENTO (i̲d̲_̲a̲t̲e̲n̲d̲i̲m̲e̲n̲t̲o̲, placa_veiculo, id_cliente_veiculo, id_servico, id_funcionario, data, hora, status)
+ATENDIMENTO (i̲d̲_̲a̲t̲e̲n̲d̲i̲m̲e̲n̲t̲o̲, placa_veiculo, id_cliente_veiculo, id_servico, data, hora, status)
 placa_veiculo, id_cliente_veiculo reference VEICULO
 id_servico reference SERVICO
-id_funcionario reference FUNCIONARIO
 
 AVALIACAO (i̲d̲_̲a̲v̲a̲l̲i̲a̲c̲a̲o̲, id_cliente, id_atendimento, nota, comentarios, data)
 id_cliente reference CLIENTE
 id_atendimento reference ATENDIMENTO
 
 PAGAMENTO (i̲d̲_̲p̲a̲g̲a̲m̲e̲n̲t̲o̲, id_atendimento, forma_pagto, valor_total, descontos, comprovante)
+id_atendimento reference ATENDIMENTO
+
+REALIZA (i̲d̲_̲f̲u̲n̲c̲i̲o̲n̲a̲r̲i̲o̲, i̲d̲_̲a̲t̲e̲n̲d̲i̲m̲e̲n̲t̲o̲)
+id_funcionario reference FUNCIONARIO
 id_atendimento reference ATENDIMENTO
