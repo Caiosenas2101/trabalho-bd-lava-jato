@@ -21,7 +21,7 @@ trabalho-bd-lava-jato/
 |- modelo/
 |  |- dicionario.txt
 |  |- esquema-relacional.txt
-|  |- esquema-conceitual.png
+|  |- esquema-conceitual.jpeg
 |- sql/
 |  |- create_tables.sql
 |  |- insert_data.sql
@@ -40,7 +40,7 @@ trabalho-bd-lava-jato/
 - Java 17
 - Spring Boot
 - Spring Web MVC
-- Spring Data JPA
+- Spring JDBC
 - Maven
 - MySQL
 - HTML, CSS e JavaScript
@@ -65,7 +65,7 @@ As principais entidades do sistema são:
 
 Arquivos importantes da modelagem:
 
-- `modelo/esquema-conceitual.png`: modelo conceitual.
+- `modelo/esquema-conceitual.jpeg`: modelo conceitual.
 - `modelo/dicionario.txt`: dicionário de dados.
 - `modelo/esquema-relacional.txt`: esquema relacional em texto.
 
@@ -169,8 +169,8 @@ Exemplo de JSON:
 
 - A aplicação web ainda cobre apenas uma parte do modelo de dados.
 - O projeto possui entidades no banco que ainda não têm telas ou endpoints na interface.
-- As credenciais do banco estão em texto puro no arquivo `application.properties`.
-- Para uso mais seguro, o ideal é mover usuário e senha para variáveis de ambiente no futuro.
+- A aplicação usa `JdbcTemplate`, não `Spring Data JPA`.
+- As credenciais do banco devem ser passadas por variáveis de ambiente.
 
 ## Testes
 
@@ -189,6 +189,5 @@ Se aparecer erro informando ausência de compilador Java, isso indica que o ambi
 ## Próximos Passos Sugeridos
 
 - expandir a interface para veículos, atendimentos, pagamentos e avaliações;
-- mover credenciais para variáveis de ambiente;
 - adicionar testes de integração para os endpoints;
 - criar validações de entrada para CPF, e-mail e campos obrigatórios.

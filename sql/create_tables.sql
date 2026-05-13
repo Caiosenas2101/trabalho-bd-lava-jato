@@ -130,5 +130,5 @@ CREATE TABLE avaliacao (
         FOREIGN KEY (id_atendimento) REFERENCES atendimento(id_atendimento)
             ON DELETE CASCADE,
     CONSTRAINT chk_avaliacao_nota_escala
-        CHECK (nota BETWEEN 1 AND 5 OR nota BETWEEN 6 AND 10)
+        CHECK (nota BETWEEN 1 AND 10)
 );
