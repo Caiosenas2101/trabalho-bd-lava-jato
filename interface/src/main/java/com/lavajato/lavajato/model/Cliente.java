@@ -1,27 +1,13 @@
 package com.lavajato.lavajato.model;
 
-import jakarta.persistence.*;
-
-@Entity
-@Table(name = "cliente")
 public class Cliente {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_cliente")
     private Integer idCliente;
-
     private String nome;
     private String cpf;
     private String email;
-
-    @Column(name = "endereco_rua")
     private String enderecoRua;
-
-    @Column(name = "endereco_bairro")
     private String enderecoBairro;
-
-    @Column(name = "endereco_cidade")
     private String enderecoCidade;
 
     public Cliente() {

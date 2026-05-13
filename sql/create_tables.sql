@@ -114,6 +114,7 @@ CREATE TABLE pagamento (
     comprovante VARCHAR(200),
     CONSTRAINT fk_pagamento_id_atendimento_atendimento
         FOREIGN KEY (id_atendimento) REFERENCES atendimento(id_atendimento)
+            ON DELETE CASCADE
 );
 
 CREATE TABLE avaliacao (
@@ -127,4 +128,7 @@ CREATE TABLE avaliacao (
         FOREIGN KEY (id_cliente) REFERENCES cliente(id_cliente),
     CONSTRAINT fk_avaliacao_id_atendimento_atendimento
         FOREIGN KEY (id_atendimento) REFERENCES atendimento(id_atendimento)
+            ON DELETE CASCADE,
+    CONSTRAINT chk_avaliacao_nota_escala
+        CHECK (nota BETWEEN 1 AND 5 OR nota BETWEEN 6 AND 10)
 );
