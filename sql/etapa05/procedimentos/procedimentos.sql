@@ -1,83 +1,14 @@
 USE lava_jato;
 
 -- =========================================================
--- ETAPA 05 - FUNCOES, PROCEDIMENTOS E TRIGGERS
--- Execute este arquivo depois de create_tables.sql e insert_data.sql.
+-- ETAPA 05 - PROCEDIMENTOS
+-- Execute depois da tabela de log e das funcoes da etapa 05.
 -- =========================================================
 
--- Tabela auxiliar usada por trigger e procedimentos para registrar operacoes
--- relevantes do dominio.
-CREATE TABLE IF NOT EXISTS log_operacao (
-    id_log INT AUTO_INCREMENT PRIMARY KEY,
-    tabela_afetada VARCHAR(50) NOT NULL,
-    id_registro INT NOT NULL,
-    acao VARCHAR(50) NOT NULL,
-    descricao TEXT,
-    data_hora DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
-
-DROP FUNCTION IF EXISTS fn_valor_liquido_atendimento;
-DROP FUNCTION IF EXISTS fn_situacao_avaliacao;
 DROP PROCEDURE IF EXISTS sp_atualizar_status_atendimento;
 DROP PROCEDURE IF EXISTS sp_recalcular_pagamentos_finalizados_com_cursor;
-DROP TRIGGER IF EXISTS trg_atendimento_status_log;
-DROP TRIGGER IF EXISTS trg_pagamento_valida_desconto;
 
 DELIMITER $$
-
--- Funcao 01
--- Justificativa:
--- Centraliza o calculo do valor liquido pago em um atendimento.
--- A regra evita valor liquido negativo quando o desconto for maior que o total.
--- Utiliza estrutura condicional.
-CREATE FUNCTION fn_valor_liquido_atendimento(p_id_atendimento INT)
-RETURNS DECIMAL(10,2)
-READS SQL DATA
-BEGIN
-    DECLARE v_valor_total DECIMAL(10,2);
-    DECLARE v_descontos DECIMAL(10,2);
-    DECLARE v_valor_liquido DECIMAL(10,2);
-
-    SELECT valor_total, COALESCE(descontos, 0.00)
-    INTO v_valor_total, v_descontos
-    FROM pagamento
-    WHERE id_atendimento = p_id_atendimento
-    LIMIT 1;
-
-    IF v_valor_total IS NULL THEN
-        SET v_valor_liquido = NULL;
-    ELSEIF v_descontos > v_valor_total THEN
-        SET v_valor_liquido = 0.00;
-    ELSE
-        SET v_valor_liquido = v_valor_total - v_descontos;
-    END IF;
-
-    RETURN v_valor_liquido;
-END$$
-
--- Funcao 02
--- Justificativa:
--- Classifica a satisfacao do cliente a partir da nota da avaliacao.
--- Facilita consultas e relatorios sem repetir a regra de negocio.
--- Utiliza estrutura condicional.
-CREATE FUNCTION fn_situacao_avaliacao(p_nota TINYINT)
-RETURNS VARCHAR(20)
-DETERMINISTIC
-BEGIN
-    DECLARE v_situacao VARCHAR(20);
-
-    IF p_nota IS NULL THEN
-        SET v_situacao = 'sem avaliacao';
-    ELSEIF p_nota <= 4 THEN
-        SET v_situacao = 'critica';
-    ELSEIF p_nota <= 7 THEN
-        SET v_situacao = 'regular';
-    ELSE
-        SET v_situacao = 'excelente';
-    END IF;
-
-    RETURN v_situacao;
-END$$
 
 -- Procedimento 01
 -- Justificativa:
@@ -219,57 +150,8 @@ BEGIN
     CLOSE cur_atendimentos;
 END$$
 
--- Trigger 01
--- Justificativa:
--- Registra mudancas de status dos atendimentos, mantendo historico operacional.
--- Este trigger atualiza a tabela de logs exigida na etapa.
-CREATE TRIGGER trg_atendimento_status_log
-AFTER UPDATE ON atendimento
-FOR EACH ROW
-BEGIN
-    IF OLD.status <> NEW.status THEN
-        INSERT INTO log_operacao (
-            tabela_afetada,
-            id_registro,
-            acao,
-            descricao
-        ) VALUES (
-            'atendimento',
-            NEW.id_atendimento,
-            'ALTERACAO_STATUS',
-            CONCAT(
-                'Status alterado de ',
-                OLD.status,
-                ' para ',
-                NEW.status
-            )
-        );
-    END IF;
-END$$
-
--- Trigger 02
--- Justificativa:
--- Impede pagamentos inconsistentes no dominio do lava jato.
--- Um desconto nao pode ser maior que o valor total cobrado.
-CREATE TRIGGER trg_pagamento_valida_desconto
-BEFORE INSERT ON pagamento
-FOR EACH ROW
-BEGIN
-    IF NEW.descontos IS NULL THEN
-        SET NEW.descontos = 0.00;
-    END IF;
-
-    IF NEW.descontos > NEW.valor_total THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'O desconto nao pode ser maior que o valor total do pagamento.';
-    END IF;
-END$$
-
 DELIMITER ;
 
 -- Exemplos de uso:
--- SELECT fn_valor_liquido_atendimento(1) AS valor_liquido;
--- SELECT fn_situacao_avaliacao(8) AS situacao_avaliacao;
 -- CALL sp_atualizar_status_atendimento(1, 'finalizado');
 -- CALL sp_recalcular_pagamentos_finalizados_com_cursor();
--- SELECT * FROM log_operacao ORDER BY id_log;

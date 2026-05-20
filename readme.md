@@ -76,20 +76,27 @@ Os scripts do banco estão em `sql/`.
 
 - `sql/create_tables.sql`: cria o banco `lava_jato` e as tabelas.
 - `sql/insert_data.sql`: insere dados de exemplo.
-- `sql/etapa04_consultas.sql`: consultas SQL da etapa 04.
-- `sql/etapa04_visoes.sql`: visões SQL da etapa 04.
-- `sql/etapa04_indices.sql`: índices SQL da etapa 04.
-- `sql/etapa05_funcoes_procedimentos_triggers.sql`: funções, procedimentos, triggers e tabela de log da etapa 05.
+- `sql/etapa04/consultas/consultas.sql`: consultas SQL da etapa 04.
+- `sql/etapa04/visoes/visoes.sql`: visões SQL da etapa 04.
+- `sql/etapa04/indices/indices.sql`: índices SQL da etapa 04.
+- `sql/etapa05/log/log_operacao.sql`: tabela de log da etapa 05.
+- `sql/etapa05/funcoes/funcoes.sql`: funções da etapa 05.
+- `sql/etapa05/procedimentos/procedimentos.sql`: procedimentos da etapa 05.
+- `sql/etapa05/triggers/triggers.sql`: triggers da etapa 05.
 
 ### Ordem De Execução
 
 1. Execute `sql/create_tables.sql`.
 2. Execute `sql/insert_data.sql`.
 3. Execute os arquivos da etapa 04, se necessário:
-   - `sql/etapa04_consultas.sql`
-   - `sql/etapa04_visoes.sql`
-   - `sql/etapa04_indices.sql`
-4. Execute `sql/etapa05_funcoes_procedimentos_triggers.sql`.
+   - `sql/etapa04/consultas/consultas.sql`
+   - `sql/etapa04/visoes/visoes.sql`
+   - `sql/etapa04/indices/indices.sql`
+4. Execute os arquivos da etapa 05 nesta ordem:
+   - `sql/etapa05/log/log_operacao.sql`
+   - `sql/etapa05/funcoes/funcoes.sql`
+   - `sql/etapa05/procedimentos/procedimentos.sql`
+   - `sql/etapa05/triggers/triggers.sql`
 
 ## Configuração Da Aplicação
 
