@@ -76,11 +76,20 @@ Os scripts do banco estão em `sql/`.
 
 - `sql/create_tables.sql`: cria o banco `lava_jato` e as tabelas.
 - `sql/insert_data.sql`: insere dados de exemplo.
+- `sql/etapa04_consultas.sql`: consultas SQL da etapa 04.
+- `sql/etapa04_visoes.sql`: visões SQL da etapa 04.
+- `sql/etapa04_indices.sql`: índices SQL da etapa 04.
+- `sql/etapa05_funcoes_procedimentos_triggers.sql`: funções, procedimentos, triggers e tabela de log da etapa 05.
 
 ### Ordem De Execução
 
 1. Execute `sql/create_tables.sql`.
 2. Execute `sql/insert_data.sql`.
+3. Execute os arquivos da etapa 04, se necessário:
+   - `sql/etapa04_consultas.sql`
+   - `sql/etapa04_visoes.sql`
+   - `sql/etapa04_indices.sql`
+4. Execute `sql/etapa05_funcoes_procedimentos_triggers.sql`.
 
 ## Configuração Da Aplicação
 
