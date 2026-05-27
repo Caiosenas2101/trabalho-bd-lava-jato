@@ -14,7 +14,6 @@ const graficosDashboard = {
   faturamento: null,
   status: null,
   tendencia: null,
-  radar: null,
   notas: null,
   topClientes: null
 };
@@ -943,52 +942,6 @@ function renderizarGraficoTendencia(dados) {
   });
 }
 
-function renderizarGraficoRadar(dados) {
-  destruirGrafico('radar');
-  if (!dados.length) {
-    return;
-  }
-
-  const labels = ['Atendimentos', 'Faturamento', 'Nota media', 'Tempo medio'];
-  const maxAtendimentos = Math.max(...dados.map((d) => Number(d.atendimentos) || 0), 1);
-  const maxFaturamento = Math.max(...dados.map((d) => Number(d.faturamento) || 0), 1);
-  const maxTempo = Math.max(...dados.map((d) => Number(d.tempo_medio) || 0), 1);
-
-  const datasets = dados.map((d, i) => {
-    const corItem = cor(i);
-    return {
-      label: d.nome_servico,
-      data: [
-        ((Number(d.atendimentos) || 0) / maxAtendimentos) * 100,
-        ((Number(d.faturamento) || 0) / maxFaturamento) * 100,
-        ((Number(d.nota_media) || 0) / 10) * 100,
-        ((Number(d.tempo_medio) || 0) / maxTempo) * 100
-      ],
-      borderColor: corItem,
-      backgroundColor: `${corItem}33`,
-      borderWidth: 2,
-      pointRadius: 3
-    };
-  });
-
-  graficosDashboard.radar = new Chart($('graficoRadar'), {
-    type: 'radar',
-    data: { labels, datasets },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { position: 'bottom' } },
-      scales: {
-        r: {
-          beginAtZero: true,
-          max: 100,
-          ticks: { stepSize: 20, callback: (v) => `${v}%` }
-        }
-      }
-    }
-  });
-}
-
 function renderizarGraficoNotas(dados) {
   destruirGrafico('notas');
   const labels = dados.map((d) => `Nota ${d.nota}`);
@@ -1081,12 +1034,11 @@ async function carregarDashboard() {
   });
 
   try {
-    const [resumo, faturamento, status, tendencia, radar, notas, topClientes] = await Promise.all([
+    const [resumo, faturamento, status, tendencia, notas, topClientes] = await Promise.all([
       buscarJson(`/relatorios/dashboard-resumo?${params}`),
       buscarJson(`/relatorios/dashboard-faturamento-servico?${paramsServicos}`),
       buscarJson(`/relatorios/dashboard-status-atendimento?${params}`),
       buscarJson(`/relatorios/dashboard-tendencia?${paramsTendencia}`),
-      buscarJson(`/relatorios/dashboard-radar-servicos?${montarParametros({ inicio: filtros.inicio, fim: filtros.fim, limite: 5 })}`),
       buscarJson(`/relatorios/dashboard-distribuicao-notas?${params}`),
       buscarJson(`/relatorios/dashboard-top-clientes?${paramsClientes}`)
     ]);
@@ -1095,7 +1047,6 @@ async function carregarDashboard() {
     renderizarGraficoFaturamento(faturamento);
     renderizarGraficoStatus(status);
     renderizarGraficoTendencia(tendencia);
-    renderizarGraficoRadar(radar);
     renderizarGraficoNotas(notas);
     renderizarGraficoTopClientes(topClientes);
   } catch (erro) {
