@@ -1,247 +1,93 @@
 # Sistema Lava Jato
 
-Projeto acadêmico de banco de dados com modelagem conceitual, esquema relacional, scripts SQL e uma implementação web simples em Spring Boot.
+Projeto acadêmico de banco de dados (BD 2026.1). Sistema de lava jato com Spring Boot + JDBC + MySQL e interface web em HTML/CSS/JS.
 
-O sistema representa um cenário de lava jato com cadastro de clientes, veículos, funcionários, serviços, atendimentos, pagamentos e avaliações.
+## Pré-Requisitos
 
-## Objetivo
+- JDK 17
+- MySQL rodando em `localhost:3306`
+- Maven Wrapper (já incluso no projeto)
 
-Este projeto reúne:
+## Como Rodar
 
-- modelagem conceitual do domínio;
-- dicionário de dados;
-- esquema relacional;
-- scripts de criação e carga do banco;
-- aplicação web para consulta e cadastro de dados básicos.
+### 1. Criar e popular o banco
 
-## Estrutura Do Projeto
+No MySQL, execute na ordem:
 
 ```text
-trabalho-bd-lava-jato/
-|- modelo/
-|  |- dicionario.txt
-|  |- esquema-relacional.txt
-|  |- esquema-conceitual.jpeg
-|- sql/
-|  |- create_tables.sql
-|  |- insert_data.sql
-|- interface/
-|  |- pom.xml
-|  |- mvnw
-|  |- mvnw.cmd
-|  |- src/
-|     |- main/
-|     |  |- java/
-|     |  |- resources/
+sql/create_tables.sql
+sql/insert_data.sql
+sql/etapa04/visoes/visoes.sql
+sql/etapa04/indices/indices.sql
+sql/etapa05/log/log_operacao.sql
+sql/etapa05/funcoes/funcoes.sql
+sql/etapa05/procedimentos/procedimentos.sql
+sql/etapa05/triggers/triggers.sql
 ```
 
-## Tecnologias Utilizadas
+Os arquivos em `sql/etapa04/consultas/` são apenas para inspeção manual, não precisam ser executados.
 
-- Java 17
-- Spring Boot
-- Spring Web MVC
-- Spring JDBC
-- Maven
-- MySQL
-- HTML, CSS e JavaScript
+### 2. Ajustar a senha do MySQL
 
-## Modelo De Dados
-
-As principais entidades do sistema são:
-
-- `CLIENTE`
-- `CLIENTE_TELEFONE`
-- `VEICULO`
-- `CARRO`
-- `MOTO`
-- `FUNCIONARIO`
-- `FUNCIONARIO_TELEFONE`
-- `LAVADOR`
-- `GERENTE`
-- `SERVICO`
-- `ATENDIMENTO`
-- `REALIZA`
-- `AVALIACAO`
-- `PAGAMENTO`
-
-Arquivos importantes da modelagem:
-
-- `modelo/esquema-conceitual.jpeg`: modelo conceitual.
-- `modelo/dicionario.txt`: dicionário de dados.
-- `modelo/esquema-relacional.txt`: esquema relacional em texto.
-
-## Banco De Dados
-
-Os scripts do banco estão em `sql/`.
-
-- `sql/create_tables.sql`: cria o banco `lava_jato` e as tabelas.
-- `sql/insert_data.sql`: insere dados de exemplo.
-- `sql/etapa04/consultas/consultas.sql`: consultas SQL da etapa 04.
-- `sql/etapa04/visoes/visoes.sql`: visões SQL da etapa 04.
-- `sql/etapa04/indices/indices.sql`: índices SQL da etapa 04.
-- `sql/etapa05/log/log_operacao.sql`: tabela de log da etapa 05.
-- `sql/etapa05/funcoes/funcoes.sql`: funções da etapa 05.
-- `sql/etapa05/procedimentos/procedimentos.sql`: procedimentos da etapa 05.
-- `sql/etapa05/triggers/triggers.sql`: triggers da etapa 05.
-
-### Ordem De Execução
-
-1. Execute `sql/create_tables.sql`.
-2. Execute `sql/insert_data.sql`.
-3. Execute os arquivos da etapa 04, se necessário:
-   - `sql/etapa04/consultas/consultas.sql`
-   - `sql/etapa04/visoes/visoes.sql`
-   - `sql/etapa04/indices/indices.sql`
-4. Execute os arquivos da etapa 05 nesta ordem:
-   - `sql/etapa05/log/log_operacao.sql`
-   - `sql/etapa05/funcoes/funcoes.sql`
-   - `sql/etapa05/procedimentos/procedimentos.sql`
-   - `sql/etapa05/triggers/triggers.sql`
-
-## Configuração Da Aplicação
-
-As configurações da aplicação estão em `interface/src/main/resources/application.properties`.
-
-Configuração atual:
+Edite `interface/src/main/resources/application.properties` se a senha do seu MySQL for diferente:
 
 ```properties
 spring.datasource.url=jdbc:mysql://localhost:3306/lava_jato
 spring.datasource.username=root
-spring.datasource.password=V1nte101@@
-
+spring.datasource.password=SUA_SENHA
 server.port=8080
 ```
 
-A aplicação não usa JPA/Hibernate, então nenhuma propriedade `spring.jpa.*` é necessária.
+### 3. Subir a aplicação
 
-## Pré-Requisitos
+Entre na pasta `interface` e rode:
 
-Antes de rodar o projeto, você precisa ter instalado:
-
-- MySQL em execução localmente
-- JDK 17 configurado no sistema
-- Maven ou usar o Maven Wrapper do projeto
-
-Importante:
-
-- Para compilar e testar a aplicação, é necessário um `JDK`, não apenas um `JRE`.
-- O banco `lava_jato` deve existir e estar populado antes de subir a aplicação.
-
-## Como Rodar A Aplicação Web
-
-Entre na pasta `interface` e execute:
+- **Windows (PowerShell):**
 
 ```powershell
 .\mvnw.cmd spring-boot:run
 ```
 
-Depois, acesse:
+- **Mac/Linux:**
 
-[`http://localhost:8080`](http://localhost:8080)
-
-## Funcionalidades Implementadas Na Interface
-
-A interface web atualmente oferece:
-
-- CRUD completo de clientes, serviços, veículos, funcionários, atendimentos e avaliações
-- Consultas e visões da etapa 04 (faturamento, atendimentos por período, anti-join, subconsulta, views)
-- Operações da etapa 05 (funções, procedimentos com cursor, triggers e log)
-- Dashboard estatístico integrado com indicadores resumidos, estatísticas descritivas e 6 gráficos dinâmicos baseados em dados do banco
-
-### Endpoints Disponíveis
-
-Todos os recursos abaixo expõem operações `GET` (lista e por id), `POST`, `PUT` e `DELETE`:
-
-- `/clientes`
-- `/servicos`
-- `/veiculos` (chave composta `placa/idCliente`)
-- `/funcionarios`
-- `/atendimentos`
-- `/avaliacoes`
-
-Exemplo de payload para criar um cliente:
-
-```json
-{
-  "nome": "João Silva",
-  "cpf": "12345678901",
-  "email": "joao@email.com",
-  "enderecoRua": "Rua das Flores",
-  "enderecoBairro": "Boa Viagem",
-  "enderecoCidade": "Recife"
-}
+```bash
+./mvnw spring-boot:run
 ```
 
-Exemplo de payload para criar um serviço:
+Aguarde a linha `Started LavajatoApplication`.
 
-```json
-{
-  "nomeServico": "Lavagem Simples",
-  "preco": 30.00,
-  "tempoMin": 40,
-  "descricao": "Lavagem externa do veiculo"
-}
+### 4. Acessar
+
+Abra no navegador:
+
+```text
+http://localhost:8080
 ```
 
-#### Consultas, Views e Operações da Etapa 05
+Para testar se o backend está vivo:
 
-- `GET /relatorios/consulta-faturamento?minimo=60`
-- `GET /relatorios/consulta-atendimentos-periodo?inicio=YYYY-MM-DD&fim=YYYY-MM-DD`
-- `GET /relatorios/consulta-atendimentos-sem-pagamento`
-- `GET /relatorios/consulta-clientes-acima-media`
-- `GET /relatorios/view-atendimentos-finalizados`
-- `GET /relatorios/view-clientes-boas-avaliacoes`
-- `GET /relatorios/funcao-valor-liquido?idAtendimento=...`
-- `GET /relatorios/avaliacao-atendimento?idAtendimento=...`
-- `POST /relatorios/procedimento-atualizar-status?idAtendimento=...&status=...`
-- `POST /relatorios/procedimento-recalcular-pagamentos`
-- `GET /relatorios/logs`
-
-#### Dashboard Estatístico
-
-Todos os endpoints aceitam os parâmetros opcionais `inicio` e `fim` (formato `YYYY-MM-DD`). Os dados retornados são lidos diretamente das tabelas do banco `lava_jato`.
-
-- `GET /relatorios/dashboard-resumo`: indicadores resumidos do período (totais, ticket médio, média, mediana, moda, variância, desvio padrão das notas e taxa de conclusão).
-- `GET /relatorios/dashboard-faturamento-servico?limite=10`: faturamento líquido por serviço (gráfico de barras).
-- `GET /relatorios/dashboard-status-atendimento`: distribuição de atendimentos por status (gráfico de pizza).
-- `GET /relatorios/dashboard-tendencia?granularidade=dia|semana|mes`: tendência temporal de atendimentos e faturamento (gráfico de linha).
-- `GET /relatorios/dashboard-radar-servicos?limite=5`: comparativo entre os top serviços (gráfico de radar).
-- `GET /relatorios/dashboard-distribuicao-notas`: histograma das notas das avaliações (gráfico de barras horizontais).
-- `GET /relatorios/dashboard-top-clientes?limite=10`: ranking dos clientes que mais gastaram no período (gráfico de barras).
-
-> Existe também o endpoint `GET /relatorios/dashboard-formas-pagamento`, disponível no backend para análise por forma de pagamento, mas atualmente sem visualização própria na tela.
-
-A tela do dashboard, em `interface/src/main/resources/static/index.html`, consome esses endpoints e usa a biblioteca [Chart.js](https://www.chartjs.org/) (via CDN) para renderizar:
-
-- 10 indicadores resumidos (totais, ticket médio, faturamento, taxa de conclusão)
-- 6 cards de estatísticas descritivas (média, mediana, moda + frequência, variância, desvio padrão, mínimo/máximo)
-- 6 gráficos interativos: faturamento por serviço (barras), atendimentos por status (pizza), tendência temporal (linha de dupla escala), comparativo de top serviços (radar), distribuição de notas (barras horizontais) e top clientes (barras horizontais)
-- Filtros interativos de período (data início/fim), granularidade temporal (dia/semana/mês) e limite de itens nos rankings
-
-## Observações Importantes
-
-- A aplicação usa `JdbcTemplate`, não `Spring Data JPA`.
-- Toda a aba "Dashboard" da interface é alimentada exclusivamente por consultas SQL contra o banco `lava_jato`.
-- O dashboard usa funções nativas do MySQL para estatísticas: `AVG`, `VAR_POP`, `STDDEV_POP`, `MIN`, `MAX`, além de `ROW_NUMBER() OVER (...)` para o cálculo da mediana e `GROUP BY ... ORDER BY COUNT(*)` para a moda.
-- A biblioteca Chart.js é carregada via CDN. Caso a aplicação rode em rede sem internet, baixe `chart.umd.min.js` para `interface/src/main/resources/static/` e ajuste a tag `<script>` em `index.html`.
-- As credenciais do banco devem ser passadas por variáveis de ambiente em produção.
-
-## Testes
-
-O projeto possui um teste básico de contexto em:
-
-- `interface/src/test/java/com/lavajato/lavajato/LavajatoApplicationTests.java`
-
-Para executar os testes:
-
-```powershell
-.\mvnw.cmd test
+```text
+http://localhost:8080/clientes
 ```
 
-Se aparecer erro informando ausência de compilador Java, isso indica que o ambiente está com `JRE` ou com `JAVA_HOME` incorreto.
+## Estrutura
 
-## Próximos Passos Sugeridos
+```text
+trabalho-bd-lava-jato/
+|- modelo/                 modelo conceitual, dicionário e esquema relacional
+|- sql/                    scripts do banco (etapas 04 e 05)
+|- interface/              aplicação Spring Boot
+```
 
-- expor um CRUD de pagamentos na interface;
-- adicionar testes de integração para os endpoints;
-- criar validações de entrada para CPF, e-mail e campos obrigatórios.
+## O Que A Interface Tem
+
+- CRUD de clientes, serviços, veículos, funcionários, atendimentos e avaliações
+- 4 consultas e 2 views da Etapa 04
+- Funções, procedures (incluindo uma com cursor) e triggers da Etapa 05
+- Dashboard com indicadores, estatísticas descritivas e 6 gráficos
+
+## Observações
+
+- O projeto **não usa ORM**. Todo SQL é explícito via `JdbcTemplate`.
+- Se o `fetch` da tela der "Failed to fetch", o backend caiu ou o MySQL não está rodando.
+- O dashboard usa Chart.js via CDN, então precisa de internet ao abrir a página.
