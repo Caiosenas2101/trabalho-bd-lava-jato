@@ -95,13 +95,16 @@ CREATE TABLE atendimento (
     placa_veiculo CHAR(7) NOT NULL,
     id_cliente_veiculo INT NOT NULL,
     id_servico INT NOT NULL,
+    id_funcionario INT NOT NULL,
     data DATE NOT NULL,
     hora TIME NOT NULL,
     status VARCHAR(20) NOT NULL,
     CONSTRAINT fk_atendimento_veiculo
         FOREIGN KEY (placa_veiculo, id_cliente_veiculo) REFERENCES veiculo(placa, id_cliente),
     CONSTRAINT fk_atendimento_id_servico_servico
-        FOREIGN KEY (id_servico) REFERENCES servico(id_servico)
+        FOREIGN KEY (id_servico) REFERENCES servico(id_servico),
+    CONSTRAINT fk_atendimento_funcionario
+        FOREIGN KEY (id_funcionario) REFERENCES funcionario(id_funcionario)
 );
 
 CREATE TABLE realiza (

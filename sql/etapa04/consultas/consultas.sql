@@ -44,16 +44,23 @@ ORDER BY a.data, a.hora;
 
 -- Consulta 03
 -- Anti Join pela esquerda
--- Lista funcionarios que ainda nao aparecem em atendimentos.
+-- Lista atendimentos que ainda nao possuem pagamento registrado.
 SELECT
-    f.id_funcionario,
-    f.nome,
-    f.cargo
-FROM funcionario f
-LEFT JOIN realiza r
-    ON r.id_funcionario = f.id_funcionario
-WHERE r.id_atendimento IS NULL
-ORDER BY f.id_funcionario;
+    a.id_atendimento,
+    c.nome AS cliente,
+    s.nome_servico,
+    a.data,
+    a.hora,
+    a.status
+FROM atendimento a
+JOIN cliente c
+    ON c.id_cliente = a.id_cliente_veiculo
+JOIN servico s
+    ON s.id_servico = a.id_servico
+LEFT JOIN pagamento p
+    ON p.id_atendimento = a.id_atendimento
+WHERE p.id_pagamento IS NULL
+ORDER BY a.data, a.hora;
 
 -- Consulta 04
 -- Subconsulta

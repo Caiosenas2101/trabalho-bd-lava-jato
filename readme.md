@@ -141,10 +141,12 @@ Depois, acesse:
 
 ## Funcionalidades Implementadas Na Interface
 
-Atualmente, a interface web implementa apenas operações básicas para:
+A interface web atualmente oferece:
 
-- clientes
-- serviços
+- CRUD completo de clientes, serviços, veículos, funcionários, atendimentos e avaliações
+- Consultas e visões da etapa 04 (faturamento, atendimentos por período, anti-join, subconsulta, views)
+- Operações da etapa 05 (funções, procedimentos com cursor, triggers e log)
+- Dashboard estatístico integrado com indicadores resumidos, estatísticas descritivas e 7 gráficos dinâmicos baseados em dados do banco
 
 ### Endpoints Disponíveis
 
@@ -182,12 +184,33 @@ Exemplo de JSON:
 }
 ```
 
+#### Dashboard Estatístico
+
+Todos os endpoints aceitam os parâmetros opcionais `inicio` e `fim` (formato `YYYY-MM-DD`). Os dados retornados são lidos diretamente das tabelas do banco `lava_jato`.
+
+- `GET /relatorios/dashboard-resumo`: indicadores resumidos do período (totais, ticket médio, média, mediana, moda, variância, desvio padrão das notas e taxa de conclusão).
+- `GET /relatorios/dashboard-faturamento-servico?limite=10`: faturamento líquido por serviço (gráfico de barras).
+- `GET /relatorios/dashboard-status-atendimento`: distribuição de atendimentos por status (gráfico de pizza).
+- `GET /relatorios/dashboard-tendencia?granularidade=dia|semana|mes`: tendência temporal de atendimentos e faturamento (gráfico de linha).
+- `GET /relatorios/dashboard-radar-servicos?limite=5`: comparativo entre os top serviços (gráfico de radar).
+- `GET /relatorios/dashboard-distribuicao-notas`: histograma das notas das avaliações (gráfico de barras horizontais).
+- `GET /relatorios/dashboard-formas-pagamento`: distribuição de faturamento por forma de pagamento (gráfico de rosca).
+- `GET /relatorios/dashboard-top-clientes?limite=10`: ranking dos clientes que mais gastaram no período (gráfico de barras).
+
+A tela do dashboard, em `interface/src/main/resources/static/index.html`, consome esses endpoints e usa a biblioteca [Chart.js](https://www.chartjs.org/) (via CDN) para renderizar:
+
+- 12 indicadores resumidos (totais, ticket médio, faturamento, taxa de conclusão)
+- 6 cards de estatísticas descritivas (média, mediana, moda + frequência, variância, desvio padrão, mínimo/máximo)
+- 7 gráficos interativos (barras, pizza, linha de dupla escala, radar, barras horizontais, rosca e ranking)
+- Filtros interativos de período (data início/fim), granularidade temporal (dia/semana/mês) e limite de itens nos rankings
+
 ## Observações Importantes
 
-- A aplicação web ainda cobre apenas uma parte do modelo de dados.
-- O projeto possui entidades no banco que ainda não têm telas ou endpoints na interface.
 - A aplicação usa `JdbcTemplate`, não `Spring Data JPA`.
-- As credenciais do banco devem ser passadas por variáveis de ambiente.
+- Toda a aba "Dashboard" da interface é alimentada exclusivamente por consultas SQL contra o banco `lava_jato`.
+- O dashboard usa funções nativas do MySQL para estatísticas: `AVG`, `VAR_POP`, `STDDEV_POP`, `MIN`, `MAX`, além de `ROW_NUMBER() OVER (...)` para o cálculo da mediana e `GROUP BY ... ORDER BY COUNT(*)` para a moda.
+- A biblioteca Chart.js é carregada via CDN. Caso a aplicação rode em rede sem internet, baixe `chart.umd.min.js` para `interface/src/main/resources/static/` e ajuste a tag `<script>` em `index.html`.
+- As credenciais do banco devem ser passadas por variáveis de ambiente em produção.
 
 ## Testes
 

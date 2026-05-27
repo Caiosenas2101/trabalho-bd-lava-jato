@@ -1,48 +1,346 @@
-<!DOCTYPE html>
+  <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lava Jato</title>
+  <title>Lava Jato - Etapa 06</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Sistema Lava Jato</h1>
+  <header class="topo">
+    <div>
+      <p class="rotulo">BD 2026.1</p>
+      <h1>Sistema Lava Jato</h1>
+    </div>
+    <nav class="abas" aria-label="Navegacao principal">
+      <button type="button" class="aba ativa" data-alvo="cadastros">Cadastros</button>
+      <button type="button" class="aba" data-alvo="relatorios">Consultas</button>
+      <button type="button" class="aba" data-alvo="operacoes">Ferramentas</button>
+      <button type="button" class="aba" data-alvo="dashboard">Dashboard</button>
+    </nav>
+  </header>
 
-  <section>
-    <h2>Clientes</h2>
-    <form id="formCliente">
-      <input type="hidden" id="idCliente">
-      <input type="text" id="nome" placeholder="Nome" required>
-      <input type="text" id="cpf" placeholder="CPF" required>
-      <input type="email" id="email" placeholder="E-mail">
-      <input type="text" id="enderecoRua" placeholder="Rua">
-      <input type="text" id="enderecoBairro" placeholder="Bairro">
-      <input type="text" id="enderecoCidade" placeholder="Cidade">
-      <div class="acoes-formulario">
-        <button type="submit" id="botaoCliente">Cadastrar Cliente</button>
-        <button type="button" id="cancelarCliente" class="secundario oculto">Cancelar edição</button>
+  <main>
+    <section id="cadastros" class="painel ativo">
+      <div class="grade-cadastros">
+        <article class="bloco">
+          <div class="cabecalho-cadastro">
+            <h2>Clientes</h2>
+            <div class="acoes-cadastro">
+              <button type="button" class="secundario" data-toggle-form="formCliente">Cadastrar</button>
+              <button type="button" class="secundario" data-toggle-lista="listaClientes">Ver cadastrados</button>
+            </div>
+          </div>
+          <form id="formCliente">
+            <input type="hidden" id="idCliente">
+            <input type="text" id="nome" placeholder="Nome" required>
+            <input type="text" id="cpf" placeholder="CPF" required maxlength="11">
+            <input type="email" id="email" placeholder="E-mail">
+            <input type="text" id="enderecoRua" placeholder="Rua">
+            <input type="text" id="enderecoBairro" placeholder="Bairro">
+            <input type="text" id="enderecoCidade" placeholder="Cidade">
+            <div class="linha-botoes">
+              <button type="submit" id="botaoCliente">Cadastrar</button>
+              <button type="button" id="cancelarCliente" class="secundario oculto">Cancelar</button>
+            </div>
+          </form>
+          <div id="listaClientes" class="lista oculto"></div>
+        </article>
+
+        <article class="bloco">
+          <div class="cabecalho-cadastro">
+            <h2>Servicos</h2>
+            <div class="acoes-cadastro">
+              <button type="button" class="secundario" data-toggle-form="formServico">Cadastrar</button>
+              <button type="button" class="secundario" data-toggle-lista="listaServicos">Ver cadastrados</button>
+            </div>
+          </div>
+          <form id="formServico">
+            <input type="hidden" id="idServico">
+            <input type="text" id="nomeServico" placeholder="Nome do servico" required>
+            <input type="number" step="0.01" id="preco" placeholder="Preco" required>
+            <input type="number" id="tempoMin" placeholder="Tempo em minutos">
+            <input type="text" id="descricao" placeholder="Descricao">
+            <div class="linha-botoes">
+              <button type="submit" id="botaoServico">Cadastrar</button>
+              <button type="button" id="cancelarServico" class="secundario oculto">Cancelar</button>
+            </div>
+          </form>
+          <div id="listaServicos" class="lista oculto"></div>
+        </article>
+
+        <article class="bloco">
+          <div class="cabecalho-cadastro">
+            <h2>Veiculos</h2>
+            <div class="acoes-cadastro">
+              <button type="button" class="secundario" data-toggle-form="formVeiculo">Cadastrar</button>
+              <button type="button" class="secundario" data-toggle-lista="listaVeiculos">Ver cadastrados</button>
+            </div>
+          </div>
+          <form id="formVeiculo">
+            <input type="hidden" id="placaVeiculoOriginal">
+            <input type="hidden" id="idClienteVeiculoOriginal">
+            <input type="text" id="placaVeiculoCadastro" placeholder="Placa" required maxlength="7">
+            <select id="clienteVeiculoCadastro" required></select>
+            <input type="text" id="modeloVeiculo" placeholder="Modelo" required>
+            <input type="text" id="corVeiculo" placeholder="Cor">
+            <input type="number" id="anoVeiculo" placeholder="Ano">
+            <div class="linha-botoes">
+              <button type="submit" id="botaoVeiculo">Cadastrar</button>
+              <button type="button" id="cancelarVeiculo" class="secundario oculto">Cancelar</button>
+            </div>
+          </form>
+          <div id="listaVeiculos" class="lista oculto"></div>
+        </article>
+
+        <article class="bloco">
+          <div class="cabecalho-cadastro">
+            <h2>Funcionarios</h2>
+            <div class="acoes-cadastro">
+              <button type="button" class="secundario" data-toggle-form="formFuncionario">Cadastrar</button>
+              <button type="button" class="secundario" data-toggle-lista="listaFuncionarios">Ver cadastrados</button>
+            </div>
+          </div>
+          <form id="formFuncionario">
+            <input type="hidden" id="idFuncionario">
+            <input type="text" id="nomeFuncionario" placeholder="Nome" required>
+            <input type="text" id="cargoFuncionario" placeholder="Cargo">
+            <input type="number" id="idSupervisor" placeholder="ID supervisor">
+            <div class="linha-botoes">
+              <button type="submit" id="botaoFuncionario">Cadastrar</button>
+              <button type="button" id="cancelarFuncionario" class="secundario oculto">Cancelar</button>
+            </div>
+          </form>
+          <div id="listaFuncionarios" class="lista oculto"></div>
+        </article>
+
+        <article class="bloco">
+          <div class="cabecalho-cadastro">
+            <h2>Atendimentos</h2>
+            <div class="acoes-cadastro">
+              <button type="button" class="secundario" data-toggle-form="formAtendimento">Cadastrar</button>
+              <button type="button" class="secundario" data-toggle-lista="listaAtendimentos">Ver cadastrados</button>
+            </div>
+          </div>
+          <form id="formAtendimento">
+            <input type="hidden" id="idAtendimento">
+            <select id="veiculoAtendimento" required></select>
+            <select id="idServicoAtendimento" required></select>
+            <select id="idFuncionarioAtendimento" required></select>
+            <input type="date" id="dataAtendimento" required>
+            <input type="time" id="horaAtendimento" required>
+            <select id="statusAtendimento" required>
+              <option value="agendado">agendado</option>
+              <option value="em andamento">em andamento</option>
+              <option value="finalizado">finalizado</option>
+              <option value="cancelado">cancelado</option>
+            </select>
+            <div class="linha-botoes">
+              <button type="submit" id="botaoAtendimento">Cadastrar</button>
+              <button type="button" id="cancelarAtendimento" class="secundario oculto">Cancelar</button>
+            </div>
+          </form>
+          <div id="listaAtendimentos" class="lista oculto"></div>
+        </article>
+
+        <article class="bloco">
+          <div class="cabecalho-cadastro">
+            <h2>Avaliacoes</h2>
+            <div class="acoes-cadastro">
+              <button type="button" class="secundario" data-toggle-form="formAvaliacao">Cadastrar</button>
+              <button type="button" class="secundario" data-toggle-lista="listaAvaliacoes">Ver cadastradas</button>
+            </div>
+          </div>
+          <form id="formAvaliacao">
+            <input type="hidden" id="idAvaliacao">
+            <select id="idAtendimentoAvaliacao" required></select>
+            <input type="hidden" id="idClienteAvaliacao">
+            <input type="text" id="clienteAvaliacaoNome" placeholder="Cliente" disabled>
+            <input type="number" id="notaAvaliacao" placeholder="Nota de 1 a 10" min="1" max="10" required>
+            <input type="text" id="comentariosAvaliacao" placeholder="Comentario">
+            <input type="date" id="dataAvaliacao" required>
+            <div class="linha-botoes">
+              <button type="submit" id="botaoAvaliacao">Cadastrar</button>
+              <button type="button" id="cancelarAvaliacao" class="secundario oculto">Cancelar</button>
+            </div>
+          </form>
+          <div id="listaAvaliacoes" class="lista oculto"></div>
+        </article>
       </div>
-    </form>
-    <ul id="listaClientes"></ul>
-  </section>
+    </section>
 
-  <section>
-    <h2>Serviços</h2>
-    <form id="formServico">
-      <input type="hidden" id="idServico">
-      <input type="text" id="nomeServico" placeholder="Nome do serviço" required>
-      <input type="number" step="0.01" id="preco" placeholder="Preço" required>
-      <input type="number" id="tempoMin" placeholder="Tempo em minutos" required>
-      <input type="text" id="descricao" placeholder="Descrição">
-      <div class="acoes-formulario">
-        <button type="submit" id="botaoServico">Cadastrar Serviço</button>
-        <button type="button" id="cancelarServico" class="secundario oculto">Cancelar edição</button>
+    <section id="relatorios" class="painel">
+      <div class="barra-filtros">
+        <label>Faturamento minimo <input type="number" id="filtroFaturamento" value="60" step="0.01"></label>
+        <label>Inicio <input type="date" id="filtroInicio" value="2026-04-10"></label>
+        <label>Fim <input type="date" id="filtroFim" value="2026-04-20"></label>
       </div>
-    </form>
-    <ul id="listaServicos"></ul>
-  </section>
+      <div class="grade-botoes">
+        <button type="button" data-relatorio="consulta-faturamento">Faturamento por servico</button>
+        <button type="button" data-relatorio="consulta-atendimentos-periodo">Atendimentos por periodo</button>
+        <button type="button" data-relatorio="consulta-atendimentos-sem-pagamento">Atendimentos sem pagamento</button>
+        <button type="button" data-relatorio="consulta-clientes-acima-media">Clientes acima da media</button>
+        <button type="button" data-relatorio="view-atendimentos-finalizados">Atendimentos finalizados</button>
+        <button type="button" data-relatorio="view-clientes-boas-avaliacoes">Clientes bem avaliados</button>
+      </div>
+      <article class="bloco largura-total">
+        <h2 id="tituloRelatorio">Resultado</h2>
+        <div id="resultadoRelatorio" class="tabela-container"></div>
+      </article>
+    </section>
 
+    <section id="operacoes" class="painel">
+      <div class="grade-cadastros">
+        <article class="bloco">
+          <h2>Consulta financeira</h2>
+          <form id="formValorLiquido">
+            <input type="number" id="funcaoIdAtendimento" placeholder="ID atendimento" value="1" required>
+            <button type="submit">Valor liquido</button>
+          </form>
+          <h2 class="subtitulo-bloco">Avaliacao do atendimento</h2>
+          <form id="formSituacaoAvaliacao">
+            <input type="number" id="funcaoAvaliacaoAtendimento" placeholder="ID atendimento" value="8" required>
+            <button type="submit">Buscar avaliacao</button>
+          </form>
+          <div id="resultadoFuncao" class="retorno"></div>
+        </article>
+
+        <article class="bloco">
+          <h2>Controle de atendimento</h2>
+          <form id="formAtualizarStatus">
+            <input type="number" id="procIdAtendimento" placeholder="ID atendimento" value="1" required>
+            <select id="procStatus" required>
+              <option value="agendado">agendado</option>
+              <option value="em andamento">em andamento</option>
+              <option value="finalizado">finalizado</option>
+              <option value="cancelado">cancelado</option>
+            </select>
+            <button type="submit">Salvar novo status</button>
+          </form>
+          <button type="button" id="botaoRecalcular">Atualizar pagamentos finalizados</button>
+          <div id="resultadoProcedure" class="retorno"></div>
+        </article>
+      </div>
+
+      <article class="bloco largura-total">
+        <div class="cabecalho-bloco">
+          <h2>Historico de alteracoes</h2>
+          <button type="button" id="botaoLogs" class="secundario">Atualizar</button>
+        </div>
+        <div id="resultadoLogs" class="tabela-container"></div>
+      </article>
+    </section>
+
+    <section id="dashboard" class="painel">
+      <article class="bloco largura-total">
+        <div class="cabecalho-bloco">
+          <h2>Dashboard Estatistico</h2>
+          <button type="button" id="botaoDashboard" class="secundario">Atualizar dashboard</button>
+        </div>
+        <div class="barra-filtros barra-filtros-dashboard">
+          <label>Inicio
+            <input type="date" id="dashInicio" value="2026-04-01">
+          </label>
+          <label>Fim
+            <input type="date" id="dashFim" value="2026-04-30">
+          </label>
+          <label>Granularidade
+            <select id="dashGranularidade">
+              <option value="dia" selected>Dia</option>
+              <option value="semana">Semana</option>
+              <option value="mes">Mes</option>
+            </select>
+          </label>
+          <label>Top servicos
+            <input type="number" id="dashLimiteServicos" value="10" min="3" max="30">
+          </label>
+          <label>Top clientes
+            <input type="number" id="dashLimiteClientes" value="10" min="3" max="30">
+          </label>
+          <button type="button" id="botaoAplicarFiltros">Aplicar filtros</button>
+        </div>
+      </article>
+
+      <article class="bloco largura-total">
+        <h2 class="titulo-secao">Indicadores Resumidos</h2>
+        <div id="indicadoresDashboard" class="indicadores"></div>
+      </article>
+
+      <article class="bloco largura-total">
+        <h2 class="titulo-secao">Estatisticas das Avaliacoes</h2>
+        <p class="texto-explicativo">
+          Medidas de tendencia central (media, mediana, moda) e de dispersao (variancia, desvio padrao)
+          calculadas sobre as notas das avaliacoes no periodo selecionado.
+        </p>
+        <div id="estatisticasDashboard" class="indicadores indicadores-stats"></div>
+      </article>
+
+      <div class="grade-graficos">
+        <article class="bloco grafico-bloco">
+          <h2 class="titulo-secao">1. Faturamento por Servico (Barras)</h2>
+          <p class="texto-explicativo">
+            Top servicos finalizados ordenados por faturamento liquido no periodo.
+          </p>
+          <div class="grafico-container">
+            <canvas id="graficoFaturamento"></canvas>
+          </div>
+        </article>
+
+        <article class="bloco grafico-bloco">
+          <h2 class="titulo-secao">2. Distribuicao de Atendimentos por Status (Pizza)</h2>
+          <p class="texto-explicativo">
+            Frequencia relativa de cada status dos atendimentos no periodo.
+          </p>
+          <div class="grafico-container">
+            <canvas id="graficoStatus"></canvas>
+          </div>
+        </article>
+
+        <article class="bloco grafico-bloco largura-total">
+          <h2 class="titulo-secao">3. Tendencia Temporal de Atendimentos e Faturamento (Linha)</h2>
+          <p class="texto-explicativo">
+            Evolucao de atendimentos e faturamento ao longo do tempo. Altere a granularidade nos filtros.
+          </p>
+          <div class="grafico-container grafico-grande">
+            <canvas id="graficoTendencia"></canvas>
+          </div>
+        </article>
+
+        <article class="bloco grafico-bloco">
+          <h2 class="titulo-secao">4. Comparativo entre Top Servicos (Radar)</h2>
+          <p class="texto-explicativo">
+            Atendimentos, faturamento, nota media e tempo (normalizados de 0 a 100) por servico.
+          </p>
+          <div class="grafico-container">
+            <canvas id="graficoRadar"></canvas>
+          </div>
+        </article>
+
+        <article class="bloco grafico-bloco">
+          <h2 class="titulo-secao">5. Distribuicao de Notas / Frequencia (Barras Horizontais)</h2>
+          <p class="texto-explicativo">
+            Histograma com a frequencia de cada nota de 1 a 10, base para o calculo de moda e mediana.
+          </p>
+          <div class="grafico-container">
+            <canvas id="graficoNotas"></canvas>
+          </div>
+        </article>
+
+        <article class="bloco grafico-bloco largura-total">
+          <h2 class="titulo-secao">6. Top Clientes por Gasto (Barras)</h2>
+          <p class="texto-explicativo">
+            Maiores clientes por valor pago no periodo.
+          </p>
+          <div class="grafico-container grafico-grande">
+            <canvas id="graficoTopClientes"></canvas>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <div id="mensagem" class="mensagem oculto"></div>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
