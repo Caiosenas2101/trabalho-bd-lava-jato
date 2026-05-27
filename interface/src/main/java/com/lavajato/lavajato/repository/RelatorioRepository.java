@@ -150,8 +150,8 @@ public class RelatorioRepository {
         jdbcTemplate.update("CALL sp_atualizar_status_atendimento(?, ?)", idAtendimento, status);
     }
 
-    public void recalcularPagamentosFinalizados() {
-        jdbcTemplate.update("CALL sp_recalcular_pagamentos_finalizados_com_cursor()");
+    public void recalcularPagamentoAtendimento(Integer idAtendimento) {
+        jdbcTemplate.update("CALL sp_recalcular_pagamento_atendimento(?)", idAtendimento);
     }
 
     public List<Map<String, Object>> logs() {

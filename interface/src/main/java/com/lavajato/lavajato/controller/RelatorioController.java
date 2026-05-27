@@ -86,10 +86,10 @@ public class RelatorioController {
         return Map.of("mensagem", "Status atualizado com sucesso.");
     }
 
-    @PostMapping("/procedimento-recalcular-pagamentos")
-    public Object recalcularPagamentosFinalizados() {
-        relatorioRepository.recalcularPagamentosFinalizados();
-        return Map.of("mensagem", "Pagamentos finalizados recalculados com sucesso.");
+    @PostMapping("/procedimento-recalcular-pagamento")
+    public Object recalcularPagamentoAtendimento(@RequestParam Integer idAtendimento) {
+        relatorioRepository.recalcularPagamentoAtendimento(idAtendimento);
+        return Map.of("mensagem", "Pagamento do atendimento atualizado com sucesso.");
     }
 
     @GetMapping("/logs")

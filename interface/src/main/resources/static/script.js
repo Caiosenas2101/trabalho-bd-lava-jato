@@ -375,6 +375,28 @@ function preencherAtendimento(atendimento) {
   $('cancelarAtendimento').classList.remove('oculto');
 }
 
+function rotuloAtendimento(a) {
+  return `${a.idAtendimento} - ${a.placaVeiculo} | ${a.data} | ${a.status}`;
+}
+
+function preencherSelectsControleAtendimento() {
+  preencherSelect(
+    'procIdAtendimento',
+    estado.atendimentos,
+    (a) => a.idAtendimento,
+    rotuloAtendimento,
+    'Selecione o atendimento'
+  );
+
+  preencherSelect(
+    'pagamentoIdAtendimento',
+    estado.atendimentos.filter((a) => a.status === 'finalizado'),
+    (a) => a.idAtendimento,
+    rotuloAtendimento,
+    'Atendimento finalizado'
+  );
+}
+
 async function carregarClientes() {
   estado.clientes = await buscarJson('/clientes');
   const clientesOrdenados = [...estado.clientes].sort((a, b) => b.idCliente - a.idCliente);
@@ -445,6 +467,7 @@ async function carregarFuncionarios() {
 
 async function carregarAtendimentos() {
   estado.atendimentos = await buscarJson('/atendimentos');
+  preencherSelectsControleAtendimento();
   preencherSelectAtendimentosAvaliacao();
   renderizarLista(
     'listaAtendimentos',
@@ -718,14 +741,16 @@ function instalarOperacoes() {
     }
   });
 
-  $('botaoRecalcular').addEventListener('click', async () => {
+  $('formRecalcularPagamento').addEventListener('submit', async (evento) => {
+    evento.preventDefault();
     try {
-      const dados = await enviarJson('/relatorios/procedimento-recalcular-pagamentos', 'POST');
+      const id = encodeURIComponent($('pagamentoIdAtendimento').value);
+      const dados = await enviarJson(`/relatorios/procedimento-recalcular-pagamento?idAtendimento=${id}`, 'POST');
       $('resultadoProcedure').textContent = dados.mensagem;
       await carregarLogs();
       await carregarDashboard();
     } catch (erro) {
-      tratarErro('executar procedure com cursor', erro);
+      tratarErro('atualizar pagamento do atendimento', erro);
     }
   });
 

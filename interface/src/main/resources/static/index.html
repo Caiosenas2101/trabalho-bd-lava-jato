@@ -211,7 +211,7 @@
         <article class="bloco">
           <h2>Controle de atendimento</h2>
           <form id="formAtualizarStatus">
-            <input type="number" id="procIdAtendimento" placeholder="ID atendimento" value="1" required>
+            <select id="procIdAtendimento" required></select>
             <select id="procStatus" required>
               <option value="agendado">agendado</option>
               <option value="em andamento">em andamento</option>
@@ -220,7 +220,11 @@
             </select>
             <button type="submit">Salvar novo status</button>
           </form>
-          <button type="button" id="botaoRecalcular">Atualizar pagamentos finalizados</button>
+          <h2 class="subtitulo-bloco">Pagamento do atendimento</h2>
+          <form id="formRecalcularPagamento">
+            <select id="pagamentoIdAtendimento" required></select>
+            <button type="submit">Atualizar pagamento</button>
+          </form>
           <div id="resultadoProcedure" class="retorno"></div>
         </article>
       </div>

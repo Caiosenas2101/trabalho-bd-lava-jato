@@ -6,6 +6,7 @@ USE lava_jato;
 -- =========================================================
 
 DROP PROCEDURE IF EXISTS sp_atualizar_status_atendimento;
+DROP PROCEDURE IF EXISTS sp_recalcular_pagamento_atendimento;
 DROP PROCEDURE IF EXISTS sp_recalcular_pagamentos_finalizados_com_cursor;
 
 DELIMITER $$
@@ -45,6 +46,102 @@ BEGIN
 END$$
 
 -- Procedimento 02
+-- Justificativa:
+-- Recalcula o pagamento de um atendimento especifico no momento do fechamento.
+-- Faz sentido na operacao real porque cada atendimento eh pago individualmente.
+CREATE PROCEDURE sp_recalcular_pagamento_atendimento(
+    IN p_id_atendimento INT
+)
+BEGIN
+    DECLARE v_total INT DEFAULT 0;
+    DECLARE v_status VARCHAR(20);
+    DECLARE v_id_servico INT;
+    DECLARE v_preco DECIMAL(10,2);
+    DECLARE v_nota TINYINT;
+    DECLARE v_desconto DECIMAL(10,2);
+    DECLARE v_comprovante VARCHAR(200);
+
+    SELECT COUNT(*)
+    INTO v_total
+    FROM atendimento
+    WHERE id_atendimento = p_id_atendimento;
+
+    IF v_total = 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Atendimento nao encontrado.';
+    END IF;
+
+    SELECT a.status, a.id_servico, s.preco, av.nota
+    INTO v_status, v_id_servico, v_preco, v_nota
+    FROM atendimento a
+    JOIN servico s
+        ON s.id_servico = a.id_servico
+    LEFT JOIN avaliacao av
+        ON av.id_atendimento = a.id_atendimento
+    WHERE a.id_atendimento = p_id_atendimento;
+
+    IF v_status <> 'finalizado' THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Apenas atendimentos finalizados podem gerar pagamento.';
+    END IF;
+
+    IF fn_situacao_avaliacao(v_nota) = 'critica' THEN
+        SET v_desconto = ROUND(v_preco * 0.10, 2);
+    ELSE
+        SET v_desconto = 0.00;
+    END IF;
+
+    SET v_comprovante = CONCAT(
+        'REC-', DATE_FORMAT(NOW(), '%Y%m%d%H%i%s'), '-ATD-', p_id_atendimento
+    );
+
+    IF EXISTS (
+        SELECT 1
+        FROM pagamento
+        WHERE id_atendimento = p_id_atendimento
+    ) THEN
+        UPDATE pagamento
+        SET valor_total = v_preco,
+            descontos = v_desconto,
+            comprovante = v_comprovante
+        WHERE id_atendimento = p_id_atendimento;
+    ELSE
+        INSERT INTO pagamento (
+            id_atendimento,
+            forma_pagto,
+            valor_total,
+            descontos,
+            comprovante
+        ) VALUES (
+            p_id_atendimento,
+            'Pendente',
+            v_preco,
+            v_desconto,
+            v_comprovante
+        );
+    END IF;
+
+    INSERT INTO log_operacao (
+        tabela_afetada,
+        id_registro,
+        acao,
+        descricao
+    ) VALUES (
+        'pagamento',
+        p_id_atendimento,
+        'RECALCULO_INDIVIDUAL',
+        CONCAT(
+            'Pagamento recalculado individualmente para atendimento ',
+            p_id_atendimento,
+            ', servico ',
+            v_id_servico,
+            ', desconto ',
+            FORMAT(v_desconto, 2)
+        )
+    );
+END$$
+
+-- Procedimento 03
 -- Justificativa:
 -- Percorre individualmente os atendimentos finalizados para recalcular pagamentos,
 -- gerar comprovantes sequenciais e registrar cada processamento no log.
@@ -154,4 +251,5 @@ DELIMITER ;
 
 -- Exemplos de uso:
 -- CALL sp_atualizar_status_atendimento(1, 'finalizado');
+-- CALL sp_recalcular_pagamento_atendimento(1);
 -- CALL sp_recalcular_pagamentos_finalizados_com_cursor();
