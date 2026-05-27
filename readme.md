@@ -108,11 +108,11 @@ Configuração atual:
 spring.datasource.url=jdbc:mysql://localhost:3306/lava_jato
 spring.datasource.username=root
 spring.datasource.password=V1nte101@@
-spring.jpa.hibernate.ddl-auto=none
-spring.jpa.show-sql=true
-spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect
+
 server.port=8080
 ```
+
+A aplicação não usa JPA/Hibernate, então nenhuma propriedade `spring.jpa.*` é necessária.
 
 ## Pré-Requisitos
 
@@ -146,16 +146,20 @@ A interface web atualmente oferece:
 - CRUD completo de clientes, serviços, veículos, funcionários, atendimentos e avaliações
 - Consultas e visões da etapa 04 (faturamento, atendimentos por período, anti-join, subconsulta, views)
 - Operações da etapa 05 (funções, procedimentos com cursor, triggers e log)
-- Dashboard estatístico integrado com indicadores resumidos, estatísticas descritivas e 7 gráficos dinâmicos baseados em dados do banco
+- Dashboard estatístico integrado com indicadores resumidos, estatísticas descritivas e 6 gráficos dinâmicos baseados em dados do banco
 
 ### Endpoints Disponíveis
 
-#### Clientes
+Todos os recursos abaixo expõem operações `GET` (lista e por id), `POST`, `PUT` e `DELETE`:
 
-- `GET /clientes`: lista os clientes
-- `POST /clientes`: cadastra um cliente
+- `/clientes`
+- `/servicos`
+- `/veiculos` (chave composta `placa/idCliente`)
+- `/funcionarios`
+- `/atendimentos`
+- `/avaliacoes`
 
-Exemplo de JSON:
+Exemplo de payload para criar um cliente:
 
 ```json
 {
@@ -168,12 +172,7 @@ Exemplo de JSON:
 }
 ```
 
-#### Serviços
-
-- `GET /servicos`: lista os serviços
-- `POST /servicos`: cadastra um serviço
-
-Exemplo de JSON:
+Exemplo de payload para criar um serviço:
 
 ```json
 {
@@ -183,6 +182,20 @@ Exemplo de JSON:
   "descricao": "Lavagem externa do veiculo"
 }
 ```
+
+#### Consultas, Views e Operações da Etapa 05
+
+- `GET /relatorios/consulta-faturamento?minimo=60`
+- `GET /relatorios/consulta-atendimentos-periodo?inicio=YYYY-MM-DD&fim=YYYY-MM-DD`
+- `GET /relatorios/consulta-atendimentos-sem-pagamento`
+- `GET /relatorios/consulta-clientes-acima-media`
+- `GET /relatorios/view-atendimentos-finalizados`
+- `GET /relatorios/view-clientes-boas-avaliacoes`
+- `GET /relatorios/funcao-valor-liquido?idAtendimento=...`
+- `GET /relatorios/avaliacao-atendimento?idAtendimento=...`
+- `POST /relatorios/procedimento-atualizar-status?idAtendimento=...&status=...`
+- `POST /relatorios/procedimento-recalcular-pagamentos`
+- `GET /relatorios/logs`
 
 #### Dashboard Estatístico
 
@@ -194,14 +207,15 @@ Todos os endpoints aceitam os parâmetros opcionais `inicio` e `fim` (formato `Y
 - `GET /relatorios/dashboard-tendencia?granularidade=dia|semana|mes`: tendência temporal de atendimentos e faturamento (gráfico de linha).
 - `GET /relatorios/dashboard-radar-servicos?limite=5`: comparativo entre os top serviços (gráfico de radar).
 - `GET /relatorios/dashboard-distribuicao-notas`: histograma das notas das avaliações (gráfico de barras horizontais).
-- `GET /relatorios/dashboard-formas-pagamento`: distribuição de faturamento por forma de pagamento (gráfico de rosca).
 - `GET /relatorios/dashboard-top-clientes?limite=10`: ranking dos clientes que mais gastaram no período (gráfico de barras).
+
+> Existe também o endpoint `GET /relatorios/dashboard-formas-pagamento`, disponível no backend para análise por forma de pagamento, mas atualmente sem visualização própria na tela.
 
 A tela do dashboard, em `interface/src/main/resources/static/index.html`, consome esses endpoints e usa a biblioteca [Chart.js](https://www.chartjs.org/) (via CDN) para renderizar:
 
-- 12 indicadores resumidos (totais, ticket médio, faturamento, taxa de conclusão)
+- 10 indicadores resumidos (totais, ticket médio, faturamento, taxa de conclusão)
 - 6 cards de estatísticas descritivas (média, mediana, moda + frequência, variância, desvio padrão, mínimo/máximo)
-- 7 gráficos interativos (barras, pizza, linha de dupla escala, radar, barras horizontais, rosca e ranking)
+- 6 gráficos interativos: faturamento por serviço (barras), atendimentos por status (pizza), tendência temporal (linha de dupla escala), comparativo de top serviços (radar), distribuição de notas (barras horizontais) e top clientes (barras horizontais)
 - Filtros interativos de período (data início/fim), granularidade temporal (dia/semana/mês) e limite de itens nos rankings
 
 ## Observações Importantes
@@ -228,6 +242,6 @@ Se aparecer erro informando ausência de compilador Java, isso indica que o ambi
 
 ## Próximos Passos Sugeridos
 
-- expandir a interface para veículos, atendimentos, pagamentos e avaliações;
+- expor um CRUD de pagamentos na interface;
 - adicionar testes de integração para os endpoints;
 - criar validações de entrada para CPF, e-mail e campos obrigatórios.
