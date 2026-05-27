@@ -84,7 +84,7 @@ trabalho-bd-lava-jato/
 - CRUD de clientes, serviços, veículos, funcionários, atendimentos e avaliações
 - 4 consultas e 2 views da Etapa 04
 - Funções, procedures (incluindo uma com cursor) e triggers da Etapa 05
-- Dashboard com indicadores, estatísticas descritivas e 6 gráficos
+- Dashboard com indicadores, estatísticas descritivas e 5 gráficos
 
 ## Observações
 

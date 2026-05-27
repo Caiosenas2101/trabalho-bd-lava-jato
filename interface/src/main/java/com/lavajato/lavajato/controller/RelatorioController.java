@@ -149,16 +149,6 @@ public class RelatorioController {
         return relatorioRepository.tendenciaTemporal(inicio, fim, granularidade);
     }
 
-    @GetMapping("/dashboard-radar-servicos")
-    public Object comparativoTopServicos(
-            @RequestParam(defaultValue = "2026-04-01")
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate inicio,
-            @RequestParam(defaultValue = "2026-04-30")
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fim,
-            @RequestParam(defaultValue = "5") Integer limite) {
-        return relatorioRepository.comparativoTopServicos(inicio, fim, limite);
-    }
-
     @GetMapping("/dashboard-distribuicao-notas")
     public Object distribuicaoNotas(
             @RequestParam(defaultValue = "2026-04-01")

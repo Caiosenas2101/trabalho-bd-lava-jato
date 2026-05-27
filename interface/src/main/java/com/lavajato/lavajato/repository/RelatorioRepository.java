@@ -356,28 +356,6 @@ public class RelatorioRepository {
                 formato, inicio, fim);
     }
 
-    public List<Map<String, Object>> comparativoTopServicos(LocalDate inicio, LocalDate fim, Integer limite) {
-        return jdbcTemplate.queryForList(
-                """
-                        SELECT
-                            s.id_servico,
-                            s.nome_servico,
-                            COUNT(a.id_atendimento)                                       AS atendimentos,
-                            COALESCE(ROUND(SUM(p.valor_total - p.descontos), 2), 0)       AS faturamento,
-                            COALESCE(ROUND(AVG(av.nota), 2), 0)                           AS nota_media,
-                            COALESCE(ROUND(AVG(s.tempo_min), 2), 0)                       AS tempo_medio
-                        FROM servico s
-                        JOIN atendimento a    ON a.id_servico = s.id_servico
-                        LEFT JOIN pagamento p ON p.id_atendimento = a.id_atendimento
-                        LEFT JOIN avaliacao av ON av.id_atendimento = a.id_atendimento
-                        WHERE a.data BETWEEN ? AND ?
-                        GROUP BY s.id_servico, s.nome_servico
-                        ORDER BY atendimentos DESC, faturamento DESC
-                        LIMIT ?
-                        """,
-                inicio, fim, limite);
-    }
-
     public List<Map<String, Object>> distribuicaoNotas(LocalDate inicio, LocalDate fim) {
         return jdbcTemplate.queryForList(
                 """
