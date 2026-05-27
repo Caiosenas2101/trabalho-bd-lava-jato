@@ -34,7 +34,7 @@ DICIONÁRIO DE DADOS — SISTEMA LAVA JATO
 • id_funcionario Tipo: INT | Restrição: PK, NOT NULL, AUTO_INCREMENT Descrição: Identificador único do funcionário.
 • id_supervisor Tipo: INT | Restrição: FK → FUNCIONARIO.id_funcionario, NULL Descrição: Referência ao funcionário que supervisiona este registro. Campo opcional (auto-relacionamento).
 • nome Tipo: VARCHAR(100) | Restrição: NOT NULL Descrição: Nome completo do funcionário.
-• cargo Tipo: VARCHAR(60) | Restrição: — Descrição: Cargo exercido pelo funcionário (ex: lavador, gerente).
+• cargo Tipo: VARCHAR(60) | Restrição: NOT NULL, CHECK ('Lavador', 'Gerente') Descrição: Cargo exercido pelo funcionário. Pelo modelo de especialização, todo funcionário deve ser lavador ou gerente.
 
 7. FUNCIONARIO_TELEFONE Descrição: Armazena os telefones do funcionário. Tabela criada a partir do atributo multivalorado telefone (1,n) de FUNCIONARIO.
 • id_funcionario Tipo: INT | Restrição: PK, FK → FUNCIONARIO.id_funcionario Descrição: Referência ao funcionário dono do telefone. Compõe a chave primária.

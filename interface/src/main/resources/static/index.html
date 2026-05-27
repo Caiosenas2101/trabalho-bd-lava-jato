@@ -104,7 +104,10 @@
           <form id="formFuncionario">
             <input type="hidden" id="idFuncionario">
             <input type="text" id="nomeFuncionario" placeholder="Nome" required>
-            <input type="text" id="cargoFuncionario" placeholder="Cargo">
+            <select id="cargoFuncionario" required>
+              <option value="Lavador">Lavador</option>
+              <option value="Gerente">Gerente</option>
+            </select>
             <input type="number" id="idSupervisor" placeholder="ID supervisor">
             <div class="linha-botoes">
               <button type="submit" id="botaoFuncionario">Cadastrar</button>

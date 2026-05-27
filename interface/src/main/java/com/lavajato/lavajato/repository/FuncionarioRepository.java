@@ -48,6 +48,7 @@ public class FuncionarioRepository {
     }
 
     public Funcionario insert(Funcionario funcionario) {
+        funcionario.setCargo(normalizarCargo(funcionario.getCargo()));
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection.prepareStatement(
@@ -64,11 +65,13 @@ public class FuncionarioRepository {
         Number key = keyHolder.getKey();
         if (key != null) {
             funcionario.setIdFuncionario(key.intValue());
+            sincronizarEspecializacao(funcionario.getIdFuncionario(), funcionario.getCargo());
         }
         return funcionario;
     }
 
     public boolean update(Funcionario funcionario) {
+        funcionario.setCargo(normalizarCargo(funcionario.getCargo()));
         int linhasAfetadas = jdbcTemplate.update(
                 """
                         UPDATE funcionario
@@ -79,6 +82,9 @@ public class FuncionarioRepository {
                 funcionario.getCargo(),
                 funcionario.getIdSupervisor(),
                 funcionario.getIdFuncionario());
+        if (linhasAfetadas > 0) {
+            sincronizarEspecializacao(funcionario.getIdFuncionario(), funcionario.getCargo());
+        }
         return linhasAfetadas > 0;
     }
 
@@ -94,5 +100,33 @@ public class FuncionarioRepository {
                 "DELETE FROM funcionario WHERE id_funcionario = ?",
                 idFuncionario);
         return linhasAfetadas > 0;
+    }
+
+    private String normalizarCargo(String cargo) {
+        if (cargo == null || cargo.isBlank()) {
+            throw new IllegalArgumentException("Funcionario deve ser Lavador ou Gerente.");
+        }
+        if ("lavador".equalsIgnoreCase(cargo.trim())) {
+            return "Lavador";
+        }
+        if ("gerente".equalsIgnoreCase(cargo.trim())) {
+            return "Gerente";
+        }
+        throw new IllegalArgumentException("Funcionario deve ser Lavador ou Gerente.");
+    }
+
+    private void sincronizarEspecializacao(Integer idFuncionario, String cargo) {
+        if ("Lavador".equals(cargo)) {
+            jdbcTemplate.update("DELETE FROM gerente WHERE id_funcionario = ?", idFuncionario);
+            jdbcTemplate.update(
+                    "INSERT IGNORE INTO lavador (id_funcionario, habilidade) VALUES (?, NULL)",
+                    idFuncionario);
+            return;
+        }
+
+        jdbcTemplate.update("DELETE FROM lavador WHERE id_funcionario = ?", idFuncionario);
+        jdbcTemplate.update(
+                "INSERT IGNORE INTO gerente (id_funcionario, bonus) VALUES (?, NULL)",
+                idFuncionario);
     }
 }

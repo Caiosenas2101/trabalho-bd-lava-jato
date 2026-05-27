@@ -15,11 +15,13 @@ CREATE TABLE cliente (
 CREATE TABLE funcionario (
     id_funcionario INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
-    cargo VARCHAR(60),
+    cargo VARCHAR(60) NOT NULL,
     id_supervisor INT,
     CONSTRAINT fk_funcionario_supervisor
         FOREIGN KEY (id_supervisor) REFERENCES funcionario(id_funcionario)
-            ON DELETE SET NULL
+            ON DELETE SET NULL,
+    CONSTRAINT chk_funcionario_cargo
+        CHECK (cargo IN ('Lavador', 'Gerente'))
 );
 
 CREATE TABLE servico (
