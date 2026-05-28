@@ -22,6 +22,7 @@ public class ClienteRepository {
         c.setEnderecoRua(rs.getString("endereco_rua"));
         c.setEnderecoBairro(rs.getString("endereco_bairro"));
         c.setEnderecoCidade(rs.getString("endereco_cidade"));
+        c.setTelefone(rs.getString("telefone"));
         return c;
     };
 
@@ -33,16 +34,28 @@ public class ClienteRepository {
 
     public List<Cliente> findAll() {
         return jdbcTemplate.query(
-                "SELECT id_cliente, nome, cpf, email, endereco_rua, endereco_bairro, endereco_cidade FROM cliente ORDER BY id_cliente",
+                """
+                        SELECT c.id_cliente, c.nome, c.cpf, c.email, c.endereco_rua, c.endereco_bairro,
+                               c.endereco_cidade, MIN(ct.telefone) AS telefone
+                        FROM cliente c
+                        LEFT JOIN cliente_telefone ct
+                            ON ct.id_cliente = c.id_cliente
+                        GROUP BY c.id_cliente, c.nome, c.cpf, c.email, c.endereco_rua, c.endereco_bairro, c.endereco_cidade
+                        ORDER BY c.id_cliente
+                        """,
                 ROW_MAPPER);
     }
 
     public Cliente findById(Integer idCliente) {
         List<Cliente> clientes = jdbcTemplate.query(
                 """
-                        SELECT id_cliente, nome, cpf, email, endereco_rua, endereco_bairro, endereco_cidade
-                        FROM cliente
-                        WHERE id_cliente = ?
+                        SELECT c.id_cliente, c.nome, c.cpf, c.email, c.endereco_rua, c.endereco_bairro,
+                               c.endereco_cidade, MIN(ct.telefone) AS telefone
+                        FROM cliente c
+                        LEFT JOIN cliente_telefone ct
+                            ON ct.id_cliente = c.id_cliente
+                        WHERE c.id_cliente = ?
+                        GROUP BY c.id_cliente, c.nome, c.cpf, c.email, c.endereco_rua, c.endereco_bairro, c.endereco_cidade
                         """,
                 ROW_MAPPER,
                 idCliente);
@@ -72,6 +85,7 @@ public class ClienteRepository {
         Number key = keyHolder.getKey();
         if (key != null) {
             cliente.setIdCliente(key.intValue());
+            salvarTelefone(cliente.getIdCliente(), cliente.getTelefone());
         }
         return cliente;
     }
@@ -89,6 +103,10 @@ public class ClienteRepository {
                 cliente.getEnderecoBairro(),
                 cliente.getEnderecoCidade(),
                 cliente.getIdCliente());
+        if (linhasAfetadas > 0) {
+            jdbcTemplate.update("DELETE FROM cliente_telefone WHERE id_cliente = ?", cliente.getIdCliente());
+            salvarTelefone(cliente.getIdCliente(), cliente.getTelefone());
+        }
         return linhasAfetadas > 0;
     }
 
@@ -105,5 +123,15 @@ public class ClienteRepository {
         jdbcTemplate.update("DELETE FROM cliente_telefone WHERE id_cliente = ?", idCliente);
         int linhasAfetadas = jdbcTemplate.update("DELETE FROM cliente WHERE id_cliente = ?", idCliente);
         return linhasAfetadas > 0;
+    }
+
+    private void salvarTelefone(Integer idCliente, String telefone) {
+        if (telefone == null || telefone.isBlank()) {
+            return;
+        }
+        jdbcTemplate.update(
+                "INSERT INTO cliente_telefone (id_cliente, telefone) VALUES (?, ?)",
+                idCliente,
+                telefone.trim());
     }
 }

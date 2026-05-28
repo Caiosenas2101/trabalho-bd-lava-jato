@@ -214,6 +214,7 @@ function preencherCliente(cliente) {
   $('idCliente').value = cliente.idCliente;
   $('nome').value = valorOuVazio(cliente.nome);
   $('cpf').value = valorOuVazio(cliente.cpf);
+  $('telefoneCliente').value = valorOuVazio(cliente.telefone);
   $('email').value = valorOuVazio(cliente.email);
   $('enderecoRua').value = valorOuVazio(cliente.enderecoRua);
   $('enderecoBairro').value = valorOuVazio(cliente.enderecoBairro);
@@ -244,6 +245,8 @@ function limparVeiculo() {
   $('formVeiculo').reset();
   $('placaVeiculoOriginal').value = '';
   $('idClienteVeiculoOriginal').value = '';
+  $('tipoVeiculo').value = 'Carro';
+  atualizarCamposTipoVeiculo();
   $('placaVeiculoCadastro').disabled = false;
   $('clienteVeiculoCadastro').disabled = false;
   $('botaoVeiculo').textContent = 'Cadastrar';
@@ -259,6 +262,10 @@ function preencherVeiculo(veiculo) {
   $('modeloVeiculo').value = valorOuVazio(veiculo.modelo);
   $('corVeiculo').value = valorOuVazio(veiculo.cor);
   $('anoVeiculo').value = valorOuVazio(veiculo.ano);
+  $('tipoVeiculo').value = veiculo.tipo || 'Carro';
+  $('tipoCombustivelVeiculo').value = valorOuVazio(veiculo.tipoCombustivel);
+  $('cilindradaVeiculo').value = valorOuVazio(veiculo.cilindrada);
+  atualizarCamposTipoVeiculo();
   $('placaVeiculoCadastro').disabled = true;
   $('clienteVeiculoCadastro').disabled = true;
   $('botaoVeiculo').textContent = 'Atualizar';
@@ -379,6 +386,23 @@ function rotuloAtendimento(a) {
   return `${a.idAtendimento} - ${a.placaVeiculo} | ${a.data} | ${a.status}`;
 }
 
+function atualizarCamposTipoVeiculo() {
+  const tipo = $('tipoVeiculo').value;
+  const campoCombustivel = $('tipoCombustivelVeiculo');
+  const campoCilindrada = $('cilindradaVeiculo');
+
+  if (tipo === 'Moto') {
+    campoCombustivel.classList.add('oculto');
+    campoCilindrada.classList.remove('oculto');
+    campoCombustivel.value = '';
+    return;
+  }
+
+  campoCombustivel.classList.remove('oculto');
+  campoCilindrada.classList.add('oculto');
+  campoCilindrada.value = '';
+}
+
 function preencherSelectsControleAtendimento() {
   preencherSelect(
     'procIdAtendimento',
@@ -410,7 +434,7 @@ async function carregarClientes() {
   renderizarLista(
     'listaClientes',
     clientesOrdenados,
-    (c) => `<strong>${c.idCliente} - ${c.nome}</strong><small>CPF ${c.cpf} | ${valorOuVazio(c.email)}</small>`,
+    (c) => `<strong>${c.idCliente} - ${c.nome}</strong><small>CPF ${c.cpf} | tel ${valorOuVazio(c.telefone)} | ${valorOuVazio(c.email)}</small>`,
     preencherCliente,
     (c) => excluirRegistro(`/clientes/${c.idCliente}`, carregarClientes, limparCliente)
   );
@@ -440,7 +464,12 @@ async function carregarVeiculosCrud() {
   renderizarLista(
     'listaVeiculos',
     estado.veiculosCrud,
-    (v) => `<strong>${v.placa} - ${v.modelo}</strong><small>Dono ID ${v.idCliente} | ${valorOuVazio(v.cor)} | ${valorOuVazio(v.ano)}</small>`,
+    (v) => {
+      const detalheTipo = v.tipo === 'Moto'
+        ? `cilindrada ${valorOuVazio(v.cilindrada)}`
+        : `combustivel ${valorOuVazio(v.tipoCombustivel)}`;
+      return `<strong>${v.placa} - ${v.modelo}</strong><small>${valorOuVazio(v.tipo)} | ${detalheTipo} | Dono ID ${v.idCliente} | ${valorOuVazio(v.cor)} | ${valorOuVazio(v.ano)}</small>`;
+    },
     preencherVeiculo,
     (v) => excluirRegistro(`/veiculos/${encodeURIComponent(v.placa)}/${v.idCliente}`, atualizarVeiculos, limparVeiculo)
   );
@@ -535,6 +564,7 @@ function instalarCadastros() {
     const cliente = {
       nome: $('nome').value,
       cpf: $('cpf').value,
+      telefone: $('telefoneCliente').value,
       email: $('email').value,
       enderecoRua: $('enderecoRua').value,
       enderecoBairro: $('enderecoBairro').value,
@@ -596,7 +626,10 @@ function instalarCadastros() {
       idCliente: Number($('clienteVeiculoCadastro').value),
       modelo: $('modeloVeiculo').value,
       cor: $('corVeiculo').value,
-      ano: numeroOuNull($('anoVeiculo').value)
+      ano: numeroOuNull($('anoVeiculo').value),
+      tipo: $('tipoVeiculo').value,
+      tipoCombustivel: $('tipoCombustivelVeiculo').value,
+      cilindrada: $('cilindradaVeiculo').value
     };
     try {
       const editando = placaOriginal && idClienteOriginal;
@@ -661,6 +694,7 @@ function instalarCadastros() {
   });
 
   $('idAtendimentoAvaliacao').addEventListener('change', atualizarClienteDaAvaliacao);
+  $('tipoVeiculo').addEventListener('change', atualizarCamposTipoVeiculo);
 
   $('cancelarCliente').addEventListener('click', limparCliente);
   $('cancelarServico').addEventListener('click', limparServico);

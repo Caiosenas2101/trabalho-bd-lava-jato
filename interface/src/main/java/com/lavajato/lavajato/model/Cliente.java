@@ -9,6 +9,7 @@ public class Cliente {
     private String enderecoRua;
     private String enderecoBairro;
     private String enderecoCidade;
+    private String telefone;
 
     public Cliente() {
     }
@@ -67,5 +68,13 @@ public class Cliente {
 
     public void setEnderecoCidade(String enderecoCidade) {
         this.enderecoCidade = enderecoCidade;
+    }
+
+    public String getTelefone() {
+        return telefone;
+    }
+
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
     }
 }

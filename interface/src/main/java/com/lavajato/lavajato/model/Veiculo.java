@@ -7,6 +7,9 @@ public class Veiculo {
     private String modelo;
     private String cor;
     private Integer ano;
+    private String tipo;
+    private String tipoCombustivel;
+    private String cilindrada;
 
     public Veiculo() {
     }
@@ -49,5 +52,29 @@ public class Veiculo {
 
     public void setAno(Integer ano) {
         this.ano = ano;
+    }
+
+    public String getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
+
+    public String getTipoCombustivel() {
+        return tipoCombustivel;
+    }
+
+    public void setTipoCombustivel(String tipoCombustivel) {
+        this.tipoCombustivel = tipoCombustivel;
+    }
+
+    public String getCilindrada() {
+        return cilindrada;
+    }
+
+    public void setCilindrada(String cilindrada) {
+        this.cilindrada = cilindrada;
     }
 }
