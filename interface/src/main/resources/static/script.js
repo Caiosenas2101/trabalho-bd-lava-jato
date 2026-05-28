@@ -284,7 +284,7 @@ function preencherFuncionario(funcionario) {
   $('idFuncionario').value = funcionario.idFuncionario;
   $('nomeFuncionario').value = valorOuVazio(funcionario.nome);
   $('cargoFuncionario').value = valorOuVazio(funcionario.cargo);
-  $('idSupervisor').value = valorOuVazio(funcionario.idSupervisor);
+  preencherSelectSupervisores(valorOuVazio(funcionario.idSupervisor));
   $('botaoFuncionario').textContent = 'Atualizar';
   $('cancelarFuncionario').classList.remove('oculto');
 }
@@ -421,6 +421,24 @@ function preencherSelectsControleAtendimento() {
   );
 }
 
+function preencherSelectSupervisores(idAtual = '') {
+  const select = $('idSupervisor');
+  const selecionado = select ? select.value : '';
+
+  preencherSelect(
+    'idSupervisor',
+    estado.funcionarios,
+    (f) => f.idFuncionario,
+    (f) => `${f.idFuncionario} - ${f.nome} (${valorOuVazio(f.cargo)})`,
+    'Sem supervisor'
+  );
+
+  const valor = idAtual || selecionado;
+  if (valor && estado.funcionarios.some((f) => Number(f.idFuncionario) === Number(valor))) {
+    select.value = valor;
+  }
+}
+
 async function carregarClientes() {
   estado.clientes = await buscarJson('/clientes');
   const clientesOrdenados = [...estado.clientes].sort((a, b) => b.idCliente - a.idCliente);
@@ -478,6 +496,7 @@ async function carregarVeiculosCrud() {
 async function carregarFuncionarios() {
   estado.funcionarios = await buscarJson('/funcionarios');
   const funcionariosOrdenados = [...estado.funcionarios].sort((a, b) => b.idFuncionario - a.idFuncionario);
+  preencherSelectSupervisores();
   preencherSelect(
     'idFuncionarioAtendimento',
     estado.funcionarios,

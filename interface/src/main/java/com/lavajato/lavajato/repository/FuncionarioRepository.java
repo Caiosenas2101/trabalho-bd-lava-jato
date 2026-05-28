@@ -65,6 +65,13 @@ public class FuncionarioRepository {
         Number key = keyHolder.getKey();
         if (key != null) {
             funcionario.setIdFuncionario(key.intValue());
+            if (funcionario.getIdSupervisor() == null) {
+                funcionario.setIdSupervisor(funcionario.getIdFuncionario());
+                jdbcTemplate.update(
+                        "UPDATE funcionario SET id_supervisor = ? WHERE id_funcionario = ?",
+                        funcionario.getIdSupervisor(),
+                        funcionario.getIdFuncionario());
+            }
             sincronizarEspecializacao(funcionario.getIdFuncionario(), funcionario.getCargo());
         }
         return funcionario;
@@ -72,6 +79,9 @@ public class FuncionarioRepository {
 
     public boolean update(Funcionario funcionario) {
         funcionario.setCargo(normalizarCargo(funcionario.getCargo()));
+        if (funcionario.getIdSupervisor() == null) {
+            funcionario.setIdSupervisor(funcionario.getIdFuncionario());
+        }
         int linhasAfetadas = jdbcTemplate.update(
                 """
                         UPDATE funcionario
